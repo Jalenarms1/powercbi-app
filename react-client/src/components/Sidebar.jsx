@@ -10,9 +10,9 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className='relative w-full'>
+    <div className={`relative  ${isOpen ? 'w-[250px] mr-7' : ''}`}>
       <button
-        className={`py-4 px-1 rounded-br-md mt-2 rounded-tr-md text-black  bg-zinc-400 absolute ${isOpen ? 'translate-x-[250px]' : 'translate-x-0'} transition-transform transform  text-center z-[1]`}
+        className={`py-4 px-1  text-black mt-2 bg-zinc-400 absolute ${isOpen ? 'translate-x-[222px] rounded-bl-md  rounded-tl-md' : 'translate-x-0 rounded-br-md  rounded-tr-md'} transition-transform transform  text-center z-[1]`}
         onClick={toggleSidebar}
       >
         {isOpen ? <MdArrowBackIos className='ml-1' /> : <MdArrowForwardIos className='ml-1' />}
