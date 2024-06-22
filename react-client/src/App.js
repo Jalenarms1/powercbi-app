@@ -8,6 +8,7 @@ import { SignIn } from './components/SignIn';
 import './axiosSetup.js'
 import { isAuthenticated } from './jwt-helper.js';
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
+import { ContainerProvider } from './context/ContainerContext.jsx';
 
 function AppContent() {
   const location = useLocation()
@@ -49,7 +50,10 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <AppContent />
+        <ContainerProvider>
+          <AppContent />
+
+        </ContainerProvider>
 
       </AuthProvider>
     </Router>

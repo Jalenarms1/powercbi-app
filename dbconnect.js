@@ -1,10 +1,9 @@
 const odbc = require('odbc');
-const pool = new odbc.Pool();
 const connectionString = process.env.ODBC_CONNECTION_STRING;
 
 async function getConnection() {
   try {
-    const connection = await pool.connect(connectionString);
+    const connection = await odbc.connect(connectionString);
     console.log('Connected to SQL Server using Pool');
     return connection;
   } catch (error) {
@@ -13,6 +12,24 @@ async function getConnection() {
   }
 }
 
+const execQuery = async (query) => {
+
+    const connection = await getConnection()
+    let resp;
+    try {
+        resp = await connection.query(query)
+        console.log(resp);
+        
+    } catch (error) {
+        console.log(error);
+    }
+
+    connection.close()
+
+    return resp
+}
+
 module.exports = {
-  getConnection
+  getConnection,
+  execQuery
 };

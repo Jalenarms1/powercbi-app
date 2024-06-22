@@ -1,4 +1,4 @@
-const { getConnection } = require("../../dbconnect")
+const { getConnection, execQuery } = require("../../dbconnect")
 
 const router = require("express").Router()
 
@@ -6,13 +6,19 @@ router.post('/container/add', async (req, res) => {
     const {label, description, roles} = req.body
     const createdBy = req.user.username
 
-    const connection = await getConnection()
 
-    const resp = await connection.query(`insert into Container (uid, label, description, createdBy) values (NEWID(), '${label.replace("'", "''")}', '${description.replace("'", "''")}', '${createdBy}')`)
+    const resp = await execQuery(`insert into Container (uid, label, description, rolesAllowed, createdBy) values (NEWID(), '${label.replace("'", "''")}', '${description.replace("'", "''")}', '${roles}', '${createdBy}')`)
+
     console.log(resp);
     res.json(resp)
-    connection.close()
 
+})
+
+router.get('/container/list', async (req, res) => {
+    const resp = await execQuery('select uid, label, description, rolesAllowed from Container order by createdAt')
+    console.log(resp);
+
+    return res.json(resp)
 })
 
 

@@ -2,12 +2,15 @@ import React, { useState } from 'react'
 import { AiTwotoneFolderAdd } from "react-icons/ai";
 import { Container } from './Container';
 import { NewContainer } from './Modals/NewContainer';
+import { useContainerContext } from '../context/ContainerContext';
 
 
 
 export const Home = () => {
 
     const [openNewContainer, setOpenNewContainer] = useState(false)
+
+    const {containers} = useContainerContext()
 
     const toggleOpenContainer = () => {
         setOpenNewContainer(!openNewContainer)
@@ -21,7 +24,11 @@ export const Home = () => {
             {openNewContainer && <NewContainer closeModal={toggleOpenContainer} />}
         </div>
         <div className="flex flex-wrap gap-4">
-            <Container label={'Container sdfsdf sdfsdf sfsdsdfsf'} />
+            {containers?.map((c, i) => (
+                <Container label={c.label} />
+
+            ))}
+            {/* <Container label={'Container'} />
             <Container label={'Container'} />
             <Container label={'Container'} />
             <Container label={'Container'} />
@@ -30,8 +37,7 @@ export const Home = () => {
             <Container label={'Container'} />
             <Container label={'Container'} />
             <Container label={'Container'} />
-            <Container label={'Container'} />
-            <Container label={'Container'} />
+            <Container label={'Container'} /> */}
         </div>
     </div>
   )

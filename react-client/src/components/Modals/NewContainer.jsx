@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Checkbox } from '../Checkbox'
+import { useContainerContext } from '../../context/ContainerContext';
 
 const rolesRef = [
     { id: 'role1', name: 'roles', value: 'Role 1', label: 'Role 1', checked: true },
@@ -15,16 +16,10 @@ export const NewContainer = ({closeModal}) => {
     // const [containerRoles, setContainerRoles] = useState([])
     const [validated, setValidated] = useState(false)
     const [roles, setRoles] = useState(rolesRef)
+    const {getContainers, submitContainer} = useContainerContext()
 
 
-    const submitContainer = () => {
-        if(validated) {
-            console.log(container);
-            console.log(roles.filter(r => r.checked).map(r => r.id).join(","));
-            closeModal()
-
-        }
-    }
+    
 
     const handleCheckboxChange = (e) => {
         const {id} = e.target 
@@ -48,6 +43,11 @@ export const NewContainer = ({closeModal}) => {
         })
 
         
+    }
+
+    const handleSubmit = async () => {
+        await submitContainer(container, roles, validated, closeModal)
+        getContainers()
     }
 
     useEffect(() => {
@@ -96,7 +96,7 @@ export const NewContainer = ({closeModal}) => {
 
             </div>
             <div>
-                <button disabled={!validated} onClick={submitContainer} className={` ${validated ? 'active:scale-[.95] bg-green-300' : ' bg-zinc-400 text-zinc-300'}   shadow-md shadow-zinc-200 rounded-md p-2 px-4 border border-zinc-700`}>Create</button>
+                <button disabled={!validated} onClick={handleSubmit} className={` ${validated ? 'active:scale-[.95] bg-green-300' : ' bg-zinc-400 text-zinc-300'}   shadow-md shadow-zinc-200 rounded-md p-2 px-4 border border-zinc-700`}>Create</button>
             </div>
         </div>
     </div>
