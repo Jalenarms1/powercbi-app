@@ -16,7 +16,7 @@ function AppContent() {
   console.log(user);
 
   return (
-    <div className="bg-zinc-300 h-screen">
+    <div className="bg-white h-screen">
       
         <Navbar path={location.pathname} />
         {!user ? <SignIn /> : 

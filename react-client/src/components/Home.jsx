@@ -1,15 +1,24 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { AiTwotoneFolderAdd } from "react-icons/ai";
 import { Container } from './Container';
+import { NewContainer } from './Modals/NewContainer';
 
 
 
 export const Home = () => {
+
+    const [openNewContainer, setOpenNewContainer] = useState(false)
+
+    const toggleOpenContainer = () => {
+        setOpenNewContainer(!openNewContainer)
+    }
+
   return (
     <div className='flex flex-col p-3 w-full gap-4'>
-        <div className="w-full border-b border-zinc-600 p-2 flex justify-between items-center">
+        <div className="w-full relative border-b border-zinc-600 p-2 flex justify-between items-center">
             <p className="text-5xl text-black">Report Containers</p>
-            <AiTwotoneFolderAdd title='Add new container' className='text-3xl cursor-pointer active:shadow-md active:shadow-zinc-400 rounded-md' />
+            <AiTwotoneFolderAdd onClick={toggleOpenContainer} title='Add new container' className='text-3xl cursor-pointer active:scale-[.95] rounded-md' />
+            {openNewContainer && <NewContainer closeModal={toggleOpenContainer} />}
         </div>
         <div className="flex flex-wrap gap-4">
             <Container label={'Container sdfsdf sdfsdf sfsdsdfsf'} />

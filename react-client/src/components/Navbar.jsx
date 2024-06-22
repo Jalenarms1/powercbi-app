@@ -20,7 +20,7 @@ export const Navbar = ({path}) => {
 
   return (
     <>
-      {user && <div className='w-full bg-zinc-950 flex justify-between items-center p-3 px-5 shadow-md shadow-zinc-400 border-b border-zinc-800'>
+      {user && <div className='w-full bg-slate-900 flex justify-between items-center p-3 px-5 shadow-md shadow-zinc-400 border-b border-zinc-800'>
         <div className="text-white">
             <p className="text-2xl font-semibold">Community Bridges Inc.</p>
         </div>
