@@ -10,20 +10,26 @@ const cors = require("cors")
 
 app.use(express.static(path.join(__dirname, 'react-client/build')))
 
+
+
 const corsOptions = {
     origin: 'http://localhost:3000', // Replace with your frontend domain
     optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
-  
+
 app.use(cors(corsOptions));
 
 app.use(bodyParser.json())
 
 app.use(middleware)
 
+
 app.use(apiRouter)
 
-// app.use(express.static(path.join(__dirname, 'public')))
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'react-client/build', 'index.html'));
+});
+
 
 const port = process.env.PORT || 3000
 

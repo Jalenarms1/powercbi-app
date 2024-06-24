@@ -14,11 +14,9 @@ const middleware = (req, res, next) => {
         // }
         console.log("user", user);
         req.user = user; // Create a global variable with user info
-        next();
-      });
-    } else {
-      res.sendStatus(401);
-    }
+    });
+} 
+    next();
 }
 
 module.exports = {middleware}

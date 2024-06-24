@@ -8,6 +8,7 @@ const ContainerContext = createContext(null)
 export const ContainerProvider = ({children}) => {
 
     const [containers, setContainers] = useState(null)
+    const [currentContainer, setCurrentContainer] = useState(null)
 
     const submitContainer = async (container, roles, validated, closeModal) => {
         if(validated) {
@@ -30,12 +31,18 @@ export const ContainerProvider = ({children}) => {
         setContainers(data)
     }
 
+    const getContainer = async (id) => {
+        const {data} = await get(`/container/${id}`)
+        console.log('container', data);
+        setCurrentContainer(data[0])
+    }
+
     useEffect(() => {
         
         getContainers()
     }, [])
 
-    return <ContainerContext.Provider value={{containers, getContainers, submitContainer}}>
+    return <ContainerContext.Provider value={{containers, getContainers, submitContainer, getContainer, currentContainer}}>
         {children}
     </ContainerContext.Provider>
 }

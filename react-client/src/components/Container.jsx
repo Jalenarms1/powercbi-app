@@ -1,11 +1,54 @@
-import React from 'react'
-import { FcFolder } from 'react-icons/fc'
+import React, { useEffect, useState } from 'react'
+import { AiTwotoneFolderAdd } from 'react-icons/ai'
+import { useParams } from 'react-router-dom'
+import { ListItem } from './ListItem'
+import { useContainerContext } from '../context/ContainerContext'
+import { NewReport } from './Modals/NewReport'
 
-export const Container = ({label}) => {
+export const Container = () => {
+
+    const {id} = useParams()
+    const {getContainer, currentContainer} = useContainerContext()
+    const [openNewReport, setOpenNewReport] = useState(false)
+
+    console.log(currentContainer);
+
+    useEffect(() => {
+        getContainer(id)
+    }, [id])
+
+    const toggleNewReport = () => {
+        setOpenNewReport(!openNewReport)
+    }
+
   return (
-    <div title={label} className="container active:scale-[.9] transition-transform p-3 gap-2 bg-zinc-200 shadow-md shadow-zinc-400 cursor-pointer max-w-72  border border-zinc-400 flex rounded-md">
-        <FcFolder className='text-3xl flex-shrink-0' />
-        <p className="text-lg flex-grow truncate">{label}</p>
+    <div className='flex flex-col p-3 w-full gap-4'>
+        <div className="w-full relative border-b border-zinc-600 p-2 flex justify-between items-center">
+            <div className="flex flex-col gap-2">
+                {currentContainer && <p className="text-3xl text-black font-semibold">{currentContainer.label} - Reports</p>}
+                {currentContainer && <p className="text-xl text-zinc-400">{currentContainer.description}</p>}
+
+            </div>
+
+            <AiTwotoneFolderAdd onClick={toggleNewReport} title='Add new report' className='text-3xl cursor-pointer active:scale-[.95] rounded-md' />
+            {openNewReport && <NewReport closeModal={toggleNewReport} />}
+        </div>
+        <div className="flex flex-wrap gap-4">
+            {/* {containers?.map((c, i) => (
+                <ListItem label={c.label} />
+
+            ))} */}
+            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
+            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
+            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
+            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
+            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
+            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
+            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
+            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
+            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
+            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
+        </div>
     </div>
   )
 }

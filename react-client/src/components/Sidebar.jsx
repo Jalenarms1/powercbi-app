@@ -18,7 +18,7 @@ export const Sidebar = () => {
         {isOpen ? <MdArrowBackIos className='ml-1' /> : <MdArrowForwardIos className='ml-1' />}
       </button>
       <div
-        className={`fixed  left-0 h-full bg-slate-900 p-4 transition-transform transform ${
+        className={`absolute  left-0 h-screen bg-slate-900 p-4 transition-transform transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         style={{ width: '250px' }}

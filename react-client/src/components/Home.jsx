@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { AiTwotoneFolderAdd } from "react-icons/ai";
-import { Container } from './Container';
+import { ListItem } from './ListItem';
 import { NewContainer } from './Modals/NewContainer';
 import { useContainerContext } from '../context/ContainerContext';
 
@@ -19,13 +19,13 @@ export const Home = () => {
   return (
     <div className='flex flex-col p-3 w-full gap-4'>
         <div className="w-full relative border-b border-zinc-600 p-2 flex justify-between items-center">
-            <p className="text-5xl text-black">Report Containers</p>
+            <p className="text-3xl text-black font-semibold">Report Containers</p>
             <AiTwotoneFolderAdd onClick={toggleOpenContainer} title='Add new container' className='text-3xl cursor-pointer active:scale-[.95] rounded-md' />
             {openNewContainer && <NewContainer closeModal={toggleOpenContainer} />}
         </div>
         <div className="flex flex-wrap gap-4">
             {containers?.map((c, i) => (
-                <Container label={c.label} />
+                <ListItem item={c} />
 
             ))}
             {/* <Container label={'Container'} />

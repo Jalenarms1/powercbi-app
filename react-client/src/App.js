@@ -9,6 +9,7 @@ import './axiosSetup.js'
 import { isAuthenticated } from './jwt-helper.js';
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import { ContainerProvider } from './context/ContainerContext.jsx';
+import { Container } from './components/Container.jsx';
 
 function AppContent() {
   const location = useLocation()
@@ -26,7 +27,8 @@ function AppContent() {
             <Sidebar />
             <Routes>
               <Route exact path="/" element={<Home />} />
-              <Route  path="/my-reports" element={<MyReports />} />
+              <Route exact path='/container/:id' element={<Container />} />
+              <Route exact path="/my-reports" element={<MyReports />} />
             </Routes>
             
           </div>

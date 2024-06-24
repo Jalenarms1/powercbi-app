@@ -16,7 +16,12 @@ router.post('/container/add', async (req, res) => {
 
 router.get('/container/list', async (req, res) => {
     const resp = await execQuery('select uid, label, description, rolesAllowed from Container order by createdAt')
-    console.log(resp);
+
+    return res.json(resp)
+})
+
+router.get('/container/:id', async (req, res) => {
+    const resp = await execQuery(`select uid, label, description, rolesAllowed from Container where uid = '${req.params.id}'`)
 
     return res.json(resp)
 })
