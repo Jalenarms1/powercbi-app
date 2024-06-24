@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { get, post } from "../utils";
 import { logout, saveUser } from "../jwt-helper";
+import { useNavigate } from "react-router-dom";
 
 
 const AuthContext = createContext(null)
@@ -8,6 +9,8 @@ const AuthContext = createContext(null)
 export const AuthProvider = ({children}) => {
 
     const [user, setUser] = useState(null)
+
+    const navigate = useNavigate()
 
     const submitLogin = async (username) => {
         try {
@@ -25,6 +28,7 @@ export const AuthProvider = ({children}) => {
     const logoutUser = () => {
         logout()
         setUser(null)
+        navigate('/')
         
     }
 

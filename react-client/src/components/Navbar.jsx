@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { IoIosLogOut } from "react-icons/io";
 import { NavItem } from './NavItem';
 import { useAuth } from '../context/AuthContext';
+import logo from '../cbi_logo.png'
 
 
 export const Navbar = ({path}) => {
@@ -22,7 +23,8 @@ export const Navbar = ({path}) => {
     <>
       {user && <div className='w-full bg-slate-900 flex justify-between items-center p-3 px-5 shadow-md shadow-zinc-400 border-b border-zinc-800'>
         <div className="text-white">
-            <p className="text-2xl font-semibold">Community Bridges Inc.</p>
+            {/* <p className="text-2xl font-semibold">Community Bridges Inc.</p> */}
+            <img src={logo} alt="cbi logo" className='w-52' />
         </div>
         <div className='flex items-center gap-6 '>
           <NavItem label={"Home"} path={"/"} active={path == '/'} />
