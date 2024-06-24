@@ -3,6 +3,7 @@ import { get } from '../../utils'
 import { CgCloseR } from "react-icons/cg";
 import Dropdown from '../Dropdown';
 import { Checkbox } from '../Checkbox';
+import { ColumnList } from '../ColumnList';
 
 
 export const NewReport = ({closeModal}) => {
@@ -60,9 +61,25 @@ export const NewReport = ({closeModal}) => {
 
     console.log('cuurentDataSOurce', currentDataSource);
     console.log('currParameters', parameters);
+    console.log('columnslist', dataSourceColumns);
+
+    const handleColumnToggle = (col) => {
+        setDataSourceColumns(() => {
+            return dataSourceColumns.map(c => {
+                if(c.name == col) {
+                    return {
+                        ...c,
+                        include: !c.include
+                    }
+                }
+
+                return c
+            })
+        })
+    }
 
   return (
-    <div className="absolute transition-transform duration-200 inset-0 w-full h-[95vh] bg-zinc-300 p-6 border border-zinc-400 rounded-md z-[1] ">
+    <div className="absolute transition-transform overflow-y-scroll duration-200 inset-0 w-full h-[95vh] bg-zinc-300 p-6 border border-zinc-400 rounded-md z-[1] ">
         <div className="flex flex-col gap-4 w-full">
             <div className="flex justify-between">
                 <p className="text-xl font-semibold">Create a report</p>
@@ -94,12 +111,13 @@ export const NewReport = ({closeModal}) => {
                 </div>
                 {dataSourceColumns && dataSourceColumns.length > 0 && <div className='flex flex-col '>
                     <p>Columns</p>
-                    <div className="flex flex-col bg-white p-1 gap-2">
+                    {/* <div className="flex flex-col bg-white p-1 gap-2 rounded-md">
                         {dataSourceColumns.map((c, i) => (
-                            <Checkbox id={c.name} name={c.name} value={c.value} checked={c.include} label={c.name} key={i} />
+                            <Checkbox onChange={handleColumnToggle} id={c.name} name={c.name} value={c.name} checked={c.include} label={c.name} key={i} />
                         ))}
 
-                    </div>
+                    </div> */}
+                    <ColumnList label={'Choose column list'} options={dataSourceColumns} onSelect={handleColumnToggle} />
                 </div>}
             </div>
         </div>

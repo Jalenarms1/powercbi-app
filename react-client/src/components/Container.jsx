@@ -38,16 +38,7 @@ export const Container = () => {
                 <ListItem label={c.label} />
 
             ))} */}
-            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
-            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
-            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
-            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
-            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
-            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
-            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
-            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
-            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
-            <ListItem item={{label: 'Container', uid: 'sadasdasdasd'}} />
+            
         </div>
     </div>
   )
