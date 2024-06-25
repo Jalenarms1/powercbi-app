@@ -29,7 +29,12 @@ const execQuery = async (query) => {
     return resp
 }
 
+const CONTAINER_TABLE = 'Container'
+const REPORT_TABLE = 'Report'
+
 module.exports = {
   getConnection,
-  execQuery
+  execQuery,
+  CONTAINER_TABLE,
+  REPORT_TABLE
 };

@@ -23,7 +23,7 @@ export const Sidebar = () => {
         }`}
         style={{ width: '250px' }}
       >
-        <h2 className="text-white text-xl mb-4">Sidebar</h2>
+        <h2 className="text-white text-2xl mb-4 title-font font-semibold">PowerCBI</h2>
         <ul className="text-white">
           <li className="mb-2"><a href="#">Home</a></li>
           <li className="mb-2"><a href="#">About</a></li>

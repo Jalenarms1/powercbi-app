@@ -10,6 +10,7 @@ import { isAuthenticated } from './jwt-helper.js';
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import { ContainerProvider } from './context/ContainerContext.jsx';
 import { Container } from './components/Container.jsx';
+import { ReportContextProvider } from './context/ReportContext.jsx';
 
 function AppContent() {
   const location = useLocation()
@@ -53,7 +54,10 @@ function App() {
     <Router>
       <AuthProvider>
         <ContainerProvider>
-          <AppContent />
+          <ReportContextProvider>
+            <AppContent />
+
+          </ReportContextProvider>
 
         </ContainerProvider>
 

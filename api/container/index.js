@@ -1,4 +1,4 @@
-const { getConnection, execQuery } = require("../../dbconnect")
+const { getConnection, execQuery, CONTAINER_TABLE } = require("../../dbconnect")
 
 const router = require("express").Router()
 
@@ -7,7 +7,7 @@ router.post('/container/add', async (req, res) => {
     const createdBy = req.user.username
 
 
-    const resp = await execQuery(`insert into Container (uid, label, description, rolesAllowed, createdBy) values (NEWID(), '${label.replace("'", "''")}', '${description.replace("'", "''")}', '${roles}', '${createdBy}')`)
+    const resp = await execQuery(`insert into ${CONTAINER_TABLE} (uid, label, description, rolesAllowed, createdBy) values (NEWID(), '${label.replace("'", "''")}', '${description.replace("'", "''")}', '${roles}', '${createdBy}')`)
 
     console.log(resp);
     res.json(resp)
@@ -15,13 +15,13 @@ router.post('/container/add', async (req, res) => {
 })
 
 router.get('/container/list', async (req, res) => {
-    const resp = await execQuery('select uid, label, description, rolesAllowed from Container order by createdAt')
+    const resp = await execQuery(`select uid, label, description, rolesAllowed from ${CONTAINER_TABLE} order by createdAt`)
 
     return res.json(resp)
 })
 
 router.get('/container/:id', async (req, res) => {
-    const resp = await execQuery(`select uid, label, description, rolesAllowed from Container where uid = '${req.params.id}'`)
+    const resp = await execQuery(`select uid, label, description, rolesAllowed from ${CONTAINER_TABLE} where uid = '${req.params.id}'`)
 
     return res.json(resp)
 })

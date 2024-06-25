@@ -31,7 +31,7 @@ export const Container = () => {
             </div>
 
             <AiTwotoneFolderAdd onClick={toggleNewReport} title='Add new report' className='text-3xl cursor-pointer active:scale-[.95] rounded-md' />
-            {openNewReport && <NewReport closeModal={toggleNewReport} />}
+            {openNewReport && <NewReport containerId={id} closeModal={toggleNewReport} />}
         </div>
         <div className="flex flex-wrap gap-4">
             {/* {containers?.map((c, i) => (

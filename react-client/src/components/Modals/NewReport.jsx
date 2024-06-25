@@ -4,14 +4,18 @@ import { CgCloseR } from "react-icons/cg";
 import Dropdown from '../Dropdown';
 import { Checkbox } from '../Checkbox';
 import { ColumnList } from '../ColumnList';
+import { useReportContext } from '../../context/ReportContext';
 
 
-export const NewReport = ({closeModal}) => {
+export const NewReport = ({closeModal, containerId}) => {
 
     const [dataSources, setDataScources] = useState(null)
     const [currentDataSource, setCurrentDataSource] = useState(null)
     const [parameters, setParameters] = useState([])
     const [dataSourceColumns, setDataSourceColumns] = useState(null)
+    const [columnErr, setColumnErr] = useState(null)
+    const {submitReport} = useReportContext()
+    const [reportTitle, setReportTitle] = useState(null)
 
     const handleParameterInput = (e, i) => {
         setParameters(parameters.map((p, indx) => {
@@ -21,6 +25,23 @@ export const NewReport = ({closeModal}) => {
                 return p
             }
         }))
+    }
+
+    const handleReportSubmit = () => {
+        if (validReport()) {
+            console.log('Submitted');
+            submitReport(
+                reportTitle, 
+                currentDataSource.type_desc == 'VIEW' ? currentDataSource.name : `${currentDataSource.name} ${parameters.map(p => `'${p}'`).join(',')}`, 
+                currentDataSource.type_desc, dataSourceColumns.filter(c => c.include).map(c => c.name).join(','),
+                containerId
+            )
+            closeModal()
+        }
+    }
+
+    const validReport = () => {
+        return ((reportTitle && reportTitle.trim() != '') && (currentDataSource && dataSourceColumns))
     }
 
     const handleRemoveParam = (i) => {
@@ -44,8 +65,14 @@ export const NewReport = ({closeModal}) => {
 
         const {data} = await get(`/master-list/data-source-columns?${queryStr}`)
 
-        console.log(data);
-        setDataSourceColumns(data)
+        if (data.error) {
+            setColumnErr(data.error)
+            setDataSourceColumns(null)
+        } else {
+            setDataSourceColumns(data)
+            setColumnErr(null)
+
+        }
     }
 
     useEffect(() => {
@@ -59,9 +86,7 @@ export const NewReport = ({closeModal}) => {
         getDataSourceList()
     }, [])
 
-    console.log('cuurentDataSOurce', currentDataSource);
-    console.log('currParameters', parameters);
-    console.log('columnslist', dataSourceColumns);
+    
 
     const handleColumnToggle = (col) => {
         setDataSourceColumns(() => {
@@ -79,24 +104,30 @@ export const NewReport = ({closeModal}) => {
     }
 
   return (
-    <div className="absolute transition-transform overflow-y-scroll duration-200 inset-0 w-full h-[95vh] bg-zinc-300 p-6 border border-zinc-400 rounded-md z-[1] ">
+    <div className="absolute transition-transform overflow-y-scroll duration-200 inset-0 w-full h-[70vh] bg-zinc-300 p-6 border border-zinc-400 rounded-md z-[1] ">
         <div className="flex flex-col gap-4 w-full">
             <div className="flex justify-between">
                 <p className="text-xl font-semibold">Create a report</p>
-                <CgCloseR onClick={closeModal} className='text-xl active:scale-[.95]' />
+                <div className="flex items-center gap-2">
+                    <button onClick={handleReportSubmit} className={` ${validReport() ? 'bg-green-400 text-white active:scale-[.95]' : 'bg-zinc-500 text-zinc-400'}  rounded-md px-3 py-1`} disabled={!validReport()}>Create</button>
+                    <button onClick={closeModal} className=' border border-zinc-800 active:scale-[.95] rounded-md px-3 py-1'>Close</button>
+                    {/* <CgCloseR onClick={closeModal} className='text-xl cursor-pointer active:scale-[.95]' /> */}
+
+                </div>
             </div>
             <div className="flex flex-wrap w-full gap-6">
                 <div className="flex flex-col">
                     <label htmlFor="report-title">Title</label>
-                    <input type="text" id='report-title' placeholder='Title...' className='p-1 rounded-md' />
+                    <input value={reportTitle} onChange={(e) => setReportTitle(e.target.value)} type="text" id='report-title' placeholder='Title...' className='p-1 rounded-md' />
                 </div>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 w-72">
                     <div className="flex flex-col">
                         <p className="">Data Source</p>
                         <Dropdown onSelect={setCurrentDataSource} label={'Select a data source'} options={dataSources ?? null}  />
                     </div>
                     {(currentDataSource && currentDataSource.type_desc == 'SQL_STORED_PROCEDURE') && <p className='font-semibold'>exec {currentDataSource.name} {parameters.map(p => `'${p}'`).join(',')}</p>}
                     {currentDataSource && <button onClick={getDSColumns} className='bg-green-400  rounded-md text-white font-semibold shadow-sm shadow-zinc-500 active:scale-[.95]'>Confirm Data Source</button>}
+                    {columnErr && <p className='text-red-500 text-sm w-full'>{columnErr}</p>}
                     {(currentDataSource && currentDataSource.type_desc == 'SQL_STORED_PROCEDURE') && <div className="flex flex-col items-start gap-2">
                         <p className="">Parameters</p>
                         {parameters.map((p, i) => (

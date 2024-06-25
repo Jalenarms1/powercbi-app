@@ -39,27 +39,32 @@ router.get('/master-list/data-source-columns', async (req, res) => {
         return res.json(columns)
 
     } else {
-        const query = `SET FMTONLY ON;
-        ${req.query.exec};
-        SET FMTONLY OFF;
-        `
-        console.log('query', query);
-
-        const resp = await execQuery(query)
-
-        console.log(resp.columns);
-
-        const columns = resp.columns.map(r => {
-            const {name, dataTypeName} = r
-
-            return {
-                name, 
-                dataType: dataTypeName,
-                include: true
-            }
-        })
-
-        res.json(columns)
+        try {
+            const query = `SET FMTONLY ON;
+            ${req.query.exec};
+            SET FMTONLY OFF;
+            `
+            console.log('query', query);
+    
+            const resp = await execQuery(query)
+    
+            console.log(resp.columns);
+    
+            const columns = resp.columns.map(r => {
+                const {name, dataTypeName} = r
+    
+                return {
+                    name, 
+                    dataType: dataTypeName,
+                    include: true
+                }
+            })
+    
+            res.json(columns)
+            
+        } catch (error) {
+            res.json({error: 'Error retrieving column info. Please make sure you have entered all necessary parameters.'})
+        }
     }
 })
 
