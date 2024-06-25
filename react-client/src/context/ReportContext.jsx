@@ -1,5 +1,5 @@
 import { useContext, createContext, useState, useEffect } from "react";
-import { post } from "../utils";
+import { get, post } from "../utils";
 import { useAuth } from "./AuthContext";
 
 
@@ -7,7 +7,7 @@ const ReportContext = createContext(null)
 
 export const ReportContextProvider  = ({children}) => {
 
-    const [reports, setReport] = useState(null)
+    const [reports, setReports] = useState(null)
 
     const {user} = useAuth()
 
@@ -18,7 +18,14 @@ export const ReportContextProvider  = ({children}) => {
         console.log(resp);
     }
 
-    return <ReportContext.Provider value={{submitReport}}>
+    const getReports = async (containerId) => {
+        const {data} = await get(`/report/list?containerId=${containerId}`)
+        
+        
+        setReports(data)
+    }
+    console.log(reports);
+    return <ReportContext.Provider value={{submitReport, getReports, reports}}>
         {children}
     </ReportContext.Provider>
 }

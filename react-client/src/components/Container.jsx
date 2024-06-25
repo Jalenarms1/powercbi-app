@@ -4,18 +4,23 @@ import { useParams } from 'react-router-dom'
 import { ListItem } from './ListItem'
 import { useContainerContext } from '../context/ContainerContext'
 import { NewReport } from './Modals/NewReport'
+import { useReportContext } from '../context/ReportContext'
 
 export const Container = () => {
 
     const {id} = useParams()
     const {getContainer, currentContainer} = useContainerContext()
+    const {getReports, reports} = useReportContext()
     const [openNewReport, setOpenNewReport] = useState(false)
 
     console.log(currentContainer);
 
     useEffect(() => {
         getContainer(id)
+        getReports(id)
     }, [id])
+
+
 
     const toggleNewReport = () => {
         setOpenNewReport(!openNewReport)
@@ -34,10 +39,10 @@ export const Container = () => {
             {openNewReport && <NewReport containerId={id} closeModal={toggleNewReport} />}
         </div>
         <div className="flex flex-wrap gap-4">
-            {/* {containers?.map((c, i) => (
-                <ListItem label={c.label} />
+            {(reports && reports?.length > 0) && reports?.map((r, i) => (
+                <ListItem item={r} label={r.title} />
 
-            ))} */}
+            ))}
             
         </div>
     </div>

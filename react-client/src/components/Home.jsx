@@ -52,7 +52,7 @@ export const Home = () => {
         </div>
         <div className="flex flex-wrap gap-4">
             {containerList?.map((c, i) => (
-                <ListItem item={c} />
+                <ListItem item={c} label={c.label} />
 
             ))}
             {containerList?.length == 0 && <p>None.</p>}

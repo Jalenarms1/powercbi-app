@@ -14,7 +14,7 @@ export const NewReport = ({closeModal, containerId}) => {
     const [parameters, setParameters] = useState([])
     const [dataSourceColumns, setDataSourceColumns] = useState(null)
     const [columnErr, setColumnErr] = useState(null)
-    const {submitReport} = useReportContext()
+    const {submitReport, getReports} = useReportContext()
     const [reportTitle, setReportTitle] = useState(null)
 
     const handleParameterInput = (e, i) => {
@@ -27,16 +27,17 @@ export const NewReport = ({closeModal, containerId}) => {
         }))
     }
 
-    const handleReportSubmit = () => {
+    const handleReportSubmit = async () => {
         if (validReport()) {
             console.log('Submitted');
-            submitReport(
+            await submitReport(
                 reportTitle, 
                 currentDataSource.type_desc == 'VIEW' ? currentDataSource.name : `${currentDataSource.name} ${parameters.map(p => `'${p}'`).join(',')}`, 
                 currentDataSource.type_desc, dataSourceColumns.filter(c => c.include).map(c => c.name).join(','),
                 containerId
             )
             closeModal()
+            getReports(containerId)
         }
     }
 
