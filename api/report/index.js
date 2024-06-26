@@ -36,12 +36,12 @@ router.get(`/report/find`, async (req, res) => {
     let dataQuery;
 
     if (data[0].dataSourceType == 'VIEW') {
-        dataQuery = `select ${data[0].columnList} from ${data[0].dataSource}`
+        dataQuery = `select ${data[0].columnList.split(",").map(c => `[${c}]`).join(",")} from ${data[0].dataSource}`
     } else {
         dataQuery = `select into #sp_data 
         exec ${data[0].dataSource};
         
-        select ${data[0].columnList} from #sp_data;
+        select ${data[0].columnList.split(",").map(c => `[${c}]`).join(",")} from #sp_data;
         
         drop table #sp_data;`
     }

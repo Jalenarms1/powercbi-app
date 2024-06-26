@@ -13,7 +13,10 @@ export const Report = () => {
     const {currentContainer, getContainer} = useContainerContext()
 
     useEffect(() => {
-        getReport(id)
+        if(!currentReport || (currentReport && currentReport.uid != id)) {
+            getReport(id)
+
+        }
     }, [id])
 
     useEffect(() => {
