@@ -15,7 +15,9 @@ router.post('/container/add', async (req, res) => {
 })
 
 router.get('/container/list', async (req, res) => {
-    const resp = await execQuery(`select uid, label, description, rolesAllowed from ${CONTAINER_TABLE} order by createdAt`)
+    const resp = await execQuery(`select uid, label, description, rolesAllowed, createdAt from ${CONTAINER_TABLE} order by createdAt`)
+
+    console.log('resp', resp);
 
     return res.json(resp)
 })

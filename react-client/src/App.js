@@ -11,6 +11,7 @@ import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import { ContainerProvider } from './context/ContainerContext.jsx';
 import { Container } from './components/Container.jsx';
 import { ReportContextProvider } from './context/ReportContext.jsx';
+import { Report } from './components/Report.jsx';
 
 function AppContent() {
   const location = useLocation()
@@ -25,10 +26,11 @@ function AppContent() {
         {!user ? <SignIn /> : 
         (
           <div className='flex gap-6'>
-            <Sidebar />
+            <Sidebar path={location.pathname} />
             <Routes>
               <Route exact path="/" element={<Home />} />
               <Route exact path='/container/:id' element={<Container />} />
+              <Route path='/report/:id' element={<Report />} />
               <Route exact path="/my-reports" element={<MyReports />} />
             </Routes>
             

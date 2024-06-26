@@ -1,4 +1,5 @@
-const odbc = require('odbc');
+const sql = require("msnodesqlv8")
+
 const connectionString = process.env.ODBC_CONNECTION_STRING;
 
 async function getConnection() {
@@ -12,21 +13,19 @@ async function getConnection() {
   }
 }
 
-const execQuery = async (query) => {
 
-    const connection = await getConnection()
-    let resp;
-    try {
-        resp = await connection.query(query)
-        console.log(resp);
-        
-    } catch (error) {
-        console.log(error);
-    }
 
-    connection.close()
-
-    return resp
+async function execQuery(query) {
+  return new Promise((resolve, reject) => {
+    sql.query(connectionString, query, (err, rows) => {
+        if (err) {
+            console.error('Error executing query:', err);
+            reject(err);
+        } else {
+            resolve(rows);
+        }
+    });
+  });
 }
 
 const CONTAINER_TABLE = 'Container'

@@ -1,3 +1,12 @@
+CREATE TABLE Container (
+    uid UNIQUEIDENTIFIER PRIMARY KEY default newid(),
+    label NVARCHAR(255),
+    description NVARCHAR(MAX),
+    createdBy NVARCHAR(255),
+    rolesAllowed NVARCHAR(MAX),
+    createdAt DATETIME default getdate()
+);
+
 CREATE TABLE Report (
     uid UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     containerId UNIQUEIDENTIFIER NOT NULL,
