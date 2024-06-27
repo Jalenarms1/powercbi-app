@@ -56,4 +56,29 @@ router.get(`/report/find`, async (req, res) => {
     
 })
 
+router.get('/report/data', async (req, res) => {
+    const {dataSource, dataSourceType, columnList} = req.query
+
+    let dataQuery;
+
+    if (dataSourceType == 'VIEW') {
+        dataQuery = `select ${columnList.split(",").map(c => `[${c}]`).join(",")} from ${dataSource}`
+    } else {
+        dataQuery = `select into #sp_data 
+        exec ${dataSource};
+        
+        select ${columnList.split(",").map(c => `[${c}]`).join(",")} from #sp_data;
+        
+        drop table #sp_data;`
+    }
+    console.log('dataQuery', dataQuery);
+
+    const data = await execQuery(dataQuery)
+
+    console.log('data', data);
+
+
+    res.json(data)
+})
+
 module.exports = router

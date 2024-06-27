@@ -12,6 +12,7 @@ import { ContainerProvider } from './context/ContainerContext.jsx';
 import { Container } from './components/Container.jsx';
 import { ReportContextProvider } from './context/ReportContext.jsx';
 import { Report } from './components/Report.jsx';
+import Footer from './components/Footer.jsx';
 
 function AppContent() {
   const location = useLocation()
@@ -20,7 +21,7 @@ function AppContent() {
   console.log(user);
 
   return (
-    <div className="bg-white h-screen">
+    <div className="bg-white min-h-screen pb-0 ">
       
         <Navbar path={location.pathname} />
         {!user ? <SignIn /> : 
@@ -45,6 +46,7 @@ function AppContent() {
         </Routes>
         
       </div> */}
+      {/* <Footer /> */}
     </div>
       
     

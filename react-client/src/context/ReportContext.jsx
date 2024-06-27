@@ -9,7 +9,7 @@ export const ReportContextProvider  = ({children}) => {
 
     const [reports, setReports] = useState(null)
     const [currentReport, setCurrentReport] = useState(null)
-
+    const [currentReportData, setCurrentReportData] = useState(null)
     const {user} = useAuth()
 
     const submitReport = async (title, dataSource, dataSourceType, columnList, containerId) => {
@@ -27,13 +27,21 @@ export const ReportContextProvider  = ({children}) => {
     }
 
     const getReport = async (id) => {
+        setCurrentReportData(null)
         const {data} = await get(`/report/find?reportId=${id}`)
-        
+
         setCurrentReport(data)
     }
 
+    const getReportData = async (dataSource, dataSourceType, columnList) => {
+        setCurrentReportData(null)
+        const {data} = await get(`/report/data?dataSource=${dataSource}&dataSourceType=${dataSourceType}&columnList=${columnList}`)
+
+        setCurrentReportData(data)
+    }
+
     console.log(reports);
-    return <ReportContext.Provider value={{submitReport, getReports, reports, currentReport, getReport}}>
+    return <ReportContext.Provider value={{submitReport, getReports, reports, currentReport, getReport, getReportData, currentReportData}}>
         {children}
     </ReportContext.Provider>
 }
