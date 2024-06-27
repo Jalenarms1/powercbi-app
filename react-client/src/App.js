@@ -26,8 +26,8 @@ function AppContent() {
         <Navbar path={location.pathname} />
         {!user ? <SignIn /> : 
         (
-          <div className='flex gap-6'>
-            <Sidebar path={location.pathname} />
+          <div className='flex gap-6 min-h-screen'>
+            {/* <Sidebar path={location.pathname} /> */}
             <Routes>
               <Route exact path="/" element={<Home />} />
               <Route exact path='/container/:id' element={<Container />} />

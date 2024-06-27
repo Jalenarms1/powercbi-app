@@ -21,7 +21,7 @@ router.post('/report/add', async (req, res) => {
 router.get('/report/list', async (req, res) => {
     const containerId = req.query.containerId
 
-    const data = await execQuery(`select uid, containerId, title, dataSource, dataSourceType, columnList, createdBy, createdAt  from ${REPORT_TABLE} where containerId = '${containerId}'`)
+    const data = await execQuery(`select uid, containerId, title, dataSource, dataSourceType, columnList, createdBy, createdAt  from ${REPORT_TABLE} where containerId = '${containerId}' order by createdAt`)
 
     res.json(data)
 })
@@ -31,28 +31,8 @@ router.get(`/report/find`, async (req, res) => {
 
     const data = await execQuery(`select uid, containerId, title, dataSource, dataSourceType, columnList, createdBy, createdAt from ${REPORT_TABLE} where uid = '${reportId}'`)
 
-    console.log(data[0]);
 
-    let dataQuery;
-
-    if (data[0].dataSourceType == 'VIEW') {
-        dataQuery = `select ${data[0].columnList.split(",").map(c => `[${c}]`).join(",")} from ${data[0].dataSource}`
-    } else {
-        dataQuery = `select into #sp_data 
-        exec ${data[0].dataSource};
-        
-        select ${data[0].columnList.split(",").map(c => `[${c}]`).join(",")} from #sp_data;
-        
-        drop table #sp_data;`
-    }
-    console.log('dataQuery', dataQuery);
-
-    const dataResp = await execQuery(dataQuery)
-
-    console.log('dataResp', {...data[0], data: dataResp});
-
-
-    res.json({...data[0], data: dataResp})
+    res.json({...data[0]})
     
 })
 
