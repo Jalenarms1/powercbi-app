@@ -14,6 +14,33 @@ export const DataTable = ({currentReport, currentReportData, setSelectedValue}) 
     const [filters, setFilters] = useState([])
     const [openColumnFilter, setOpenColumnFilter] = useState(null)
     const [checkAll, setCheckAll] = useState(true)
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 100;
+    const totalPages = Math.ceil(data.length / rowsPerPage);
+
+    const handlePageJump = (e) => {
+        const pageNumber = Number(e.target.value);
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+        setCurrentPage(pageNumber);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+        setCurrentPage((prevPage) => prevPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+        setCurrentPage((prevPage) => prevPage - 1);
+        }
+    };
+
+    const paginatedData = data.slice(
+        (currentPage - 1) * rowsPerPage,
+        currentPage * rowsPerPage
+    );
 
 
     useEffect(() => {
@@ -168,9 +195,7 @@ export const DataTable = ({currentReport, currentReportData, setSelectedValue}) 
     }, [sortList, filters, currentReport])
 
     
-
-    console.log(filters);
-    console.log(data)
+  
 
   return (
     <div className=" w-[97vw] h-[95vh] overflow-auto  rounded-md shadow-sm shadow-zinc-300 relative">
@@ -193,7 +218,7 @@ export const DataTable = ({currentReport, currentReportData, setSelectedValue}) 
             </div>
             
             <div className='flex flex-col'>
-                {data.map((d, i) => (
+                {paginatedData.map((d, i) => (
                     <div className={`flex ${i % 2 == 0 ? 'bg-zinc-300' : 'bg-zinc-200'} `}>
                         {dataColumns.map((c, i) => (
                             <p onClick={() => setSelectedValue(d[c])} className='w-[300px] p-3  truncate cursor-pointer hover:shadow-inner'>{formatDateIfDate(d[c])}</p>
