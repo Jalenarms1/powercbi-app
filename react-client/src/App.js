@@ -26,7 +26,7 @@ function AppContent() {
         <Navbar path={location.pathname} />
         {!user ? <SignIn /> : 
         (
-          <div className='flex gap-6 min-h-screen'>
+          <div className='flex gap-2 min-h-screen p-2'>
             {/* <Sidebar path={location.pathname} /> */}
             <Routes>
               <Route exact path="/" element={<Home />} />
@@ -46,7 +46,7 @@ function AppContent() {
         </Routes>
         
       </div> */}
-      {/* <Footer /> */}
+      <Footer />
     </div>
       
     

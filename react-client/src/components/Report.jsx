@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useReportContext } from '../context/ReportContext'
 import { Link, useParams } from 'react-router-dom'
 import { AiTwotoneFolderAdd } from 'react-icons/ai'
-import MUIDataTable from "mui-datatables";
 import { useContainerContext } from '../context/ContainerContext';
 import { VscLoading } from "react-icons/vsc";
 import { PreviewData } from './PreviewData';
 import { ReportNav } from './ReportNav';
+import { CreateJob } from './CreateJob';
 
 
 
@@ -38,7 +38,7 @@ export const Report = () => {
     }
 
   return (
-    <div className='flex flex-col p-3 w-full gap-4 pb-96'>
+    <div className='flex flex-col flex-1 p-3 gap-4 w-2/4'>
         <div className="w-full relative border-b border-zinc-600 p-2 flex justify-between items-center">
             <div className="flex justify-between w-full">
                 <div className="flex flex-col gap-2">
@@ -55,7 +55,7 @@ export const Report = () => {
 
             {/* <AiTwotoneFolderAdd title='Add new report' className='text-3xl cursor-pointer active:scale-[.95] rounded-md' /> */}
         </div>
-        {currentView == 'Preview Data' ? <PreviewData currentReport={currentReport} currentReportData={currentReportData} getReportData={getReportData} id={id} /> : currentView == 'Create Job' ? <div>Create Job</div> :
+        {currentView == 'Preview Data' ? <PreviewData currentReport={currentReport} currentReportData={currentReportData} getReportData={getReportData} id={id} /> : currentView == 'Create Job' ? <CreateJob currentReport={currentReport} /> :
         currentView == 'Job Logs' ? <div>Job Logs</div> : <div>None</div>}
         {/* <PreviewData currentReport={currentReport} currentReportData={currentReportData} getReportData={getReportData} id={id} /> */}
     </div>

@@ -14,7 +14,7 @@ export const Sidebar = ({path}) => {
 
 
   return (
-    <div className={`relative  ${isOpen ? 'w-[300px] mr-2' : 'w-[0px]'} min-h-screen bg-slate-900 `}>
+    <div className={`relative  ${isOpen ? 'w-[300px] ' : 'w-[0px]'} min-h-screen bg-slate-900 `}>
       <button
         className={`py-4 px-1  text-black mt-2 bg-zinc-400 absolute ${isOpen ? 'translate-x-[235px] rounded-br-md  rounded-tr-md' : 'translate-x-0 rounded-br-md  rounded-tr-md'} transition-transform transform  text-center z-[1]`}
         onClick={toggleSidebar}

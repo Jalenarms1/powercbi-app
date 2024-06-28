@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { FaCheck, FaLongArrowAltUp } from "react-icons/fa";
 import { IoCheckmark, IoFilter } from "react-icons/io5";
 import { FaLongArrowAltDown } from "react-icons/fa";
+import { DataFilter } from './Modals/DataFilter';
+import { formatDateIfDate } from '../utils';
 
 
 export const DataTable = ({currentReport, currentReportData, setSelectedValue}) => {
@@ -11,6 +13,7 @@ export const DataTable = ({currentReport, currentReportData, setSelectedValue}) 
     const [sortList, setSortList] = useState([])
     const [filters, setFilters] = useState([])
     const [openColumnFilter, setOpenColumnFilter] = useState(null)
+    const [checkAll, setCheckAll] = useState(true)
 
 
     useEffect(() => {
@@ -20,6 +23,36 @@ export const DataTable = ({currentReport, currentReportData, setSelectedValue}) 
     useEffect(() => {
         setDataColumns(currentReport?.columnList.split(","))
     }, [currentReport])
+
+    
+
+    useEffect(() => {
+        if(checkAll) {
+            setFilters(filters.filter(f => f.column != openColumnFilter))
+        } else {
+            if(currentReport && currentReportData) {
+                let filterArr = []
+                currentReport?.columnList.split(",").forEach(c => {
+                    let obj = {}
+                    obj['column'] = c
+                    obj['values'] = []
+                    currentReportData?.forEach(d => {
+                        if (!obj['values'].includes(d[c])) {
+                            obj['values'] = [...obj['values'], d[c]]
+
+                        }
+                    })
+                    filterArr = [...filterArr, obj]
+
+                })
+                console.log('filterArr', filterArr);
+                setFilters(filterArr)
+
+            }
+        }
+    }, [checkAll])
+
+    
 
     const toggleFilter = (col, val) => {
         console.log(col);
@@ -36,6 +69,10 @@ export const DataTable = ({currentReport, currentReportData, setSelectedValue}) 
                     setFilters(() => {
                         return filters.map(f => {
                             if (f.column == col) {
+                                console.log('logging ' + col + val, {
+                                    ...f,
+                                    values: f.values.filter(v => v != val)
+                                });
                                 return {
                                     ...f,
                                     values: f.values.filter(v => v != val)
@@ -136,32 +173,8 @@ export const DataTable = ({currentReport, currentReportData, setSelectedValue}) 
     console.log(data)
 
   return (
-    <div className="overflow-x-scroll w-[95vw] mx-auto rounded-md shadow-sm shadow-zinc-300 relative">
-        {openColumnFilter && <div className="fixed inset-0 z-[1] w-full bg-opacity-60">
-            <div className=" bg-white shadow-md rounded-md shadow-zinc-400  flex flex-col h-96 mt-28 overflow-y-scroll w-1/2 mx-auto relative">
-                <div className='border-b bg-slate-900 text-white flex justify-between p-2 sticky top-0'>
-                    <p className='text-2xl font-semibold'>{openColumnFilter}</p>
-                    <button onClick={() => setOpenColumnFilter(null)} className='p-1 border hover:bg-slate-800  rounded-md'>Close</button>
-                </div>
-                <div className='flex items-center justify-between cursor-pointer p-2 hover:bg-zinc-100'>
-                    <p>Check all</p>
-                    <button className={` shadow-sm shadow-zinc-300 ${data.map(d => d[openColumnFilter]).length == currentReportData.map(d=> d[openColumnFilter]).length ? 'bg-blue-500' : 'bg-white'} `}>
-                        <IoCheckmark className='text-white font-semibold' />
-                    </button>
-                </div>
-                <div className="flex flex-col">
-                    {currentReportData.map(d => d[openColumnFilter]).map((cv, indx) => (
-                        <div onClick={() => toggleFilter(openColumnFilter, cv)} key={indx} className='flex items-center justify-between cursor-pointer p-2 hover:bg-zinc-100'>
-                            <p  onClick={() => toggleFilter(openColumnFilter, cv)} className='text-black'>{cv}</p>
-                            <button className={` shadow-sm shadow-zinc-300 ${data.filter(d => d[openColumnFilter] == cv).length > 0 ? 'bg-blue-500' : 'bg-white'} `}>
-                                <IoCheckmark className='text-white font-semibold' />
-                            </button>
-                        </div>
-                    ))}
-
-                </div>
-            </div>
-        </div>}
+    <div className=" w-[97vw] h-[95vh] overflow-auto  rounded-md shadow-sm shadow-zinc-300 relative">
+        {openColumnFilter && <DataFilter checkAll={checkAll} setCheckAll={setCheckAll} currentReportData={currentReportData} data={data} openColumnFilter={openColumnFilter} toggleFilter={toggleFilter} setOpenColumnFilter={setOpenColumnFilter}  />}
         {data && <div className='bg-zinc-100 rounded-md flex flex-col w-fit relative '>
             
             <div id="table-header" className='flex bg-slate-900 text-white sticky top-0'>
@@ -172,7 +185,7 @@ export const DataTable = ({currentReport, currentReportData, setSelectedValue}) 
                             {sortList.find(s => s.column == c)?.sort == 'asc' && <FaLongArrowAltUp />}
                             {sortList.find(s => s.column == c)?.sort == 'desc' &&<FaLongArrowAltDown />}
                         </div>
-                        <IoFilter onClick={openColumnFilter == c ? () => setOpenColumnFilter(null) : () => setOpenColumnFilter(c)} className='cursor-pointer scale-[.95]' />
+                        <IoFilter onClick={openColumnFilter == c ? () => setOpenColumnFilter(null) : () => setOpenColumnFilter(c)} className={`cursor-pointer ${ filters.filter(f => f.column == c).length > 0 ? 'text-green-500' : ''} scale-[.95]`} />
                         
                     </div>
                 ))}
@@ -183,7 +196,7 @@ export const DataTable = ({currentReport, currentReportData, setSelectedValue}) 
                 {data.map((d, i) => (
                     <div className={`flex ${i % 2 == 0 ? 'bg-zinc-300' : 'bg-zinc-200'} `}>
                         {dataColumns.map((c, i) => (
-                            <p onClick={() => setSelectedValue(d[c])} className='w-[300px] p-3  truncate cursor-pointer hover:shadow-inner'>{d[c]}</p>
+                            <p onClick={() => setSelectedValue(d[c])} className='w-[300px] p-3  truncate cursor-pointer hover:shadow-inner'>{formatDateIfDate(d[c])}</p>
                         ))}
                     </div>
                 ))}

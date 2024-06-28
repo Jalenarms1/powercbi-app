@@ -1,12 +1,12 @@
 import React from 'react';
+import logo from '../cbi_logo.png'
 
 const Footer = () => {
   return (
-    <footer className="bg-slate-900 text-white p-4">
+    <footer className="bg-slate-900 text-white p-4 shadow-sm shadow-zinc-400">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         <div className="text-center md:text-left mb-4 md:mb-0">
-          <h2 className="text-lg font-semibold">Company Name</h2>
-          <p className="text-sm">© 2024 Company Name. All rights reserved.</p>
+          <img src={logo} alt='logo' className='w-44' />
         </div>
         <div className="flex space-x-4">
           <a href="#" className="hover:text-gray-400">About Us</a>
