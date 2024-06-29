@@ -3,7 +3,7 @@ import logo from '../cbi_logo.png'
 
 const Footer = () => {
   return (
-    <footer className="bg-slate-900 text-white p-4 shadow-sm shadow-zinc-400">
+    <footer className="bg-slate-900 text-white p-4 shadow-sm shadow-zinc-400 border-t border-zinc-400">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         <div className="text-center md:text-left mb-4 md:mb-0">
           <img src={logo} alt='logo' className='w-44' />

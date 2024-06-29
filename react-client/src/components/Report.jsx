@@ -38,7 +38,7 @@ export const Report = () => {
     }
 
   return (
-    <div className='flex flex-col flex-1 p-3 gap-4 w-2/4'>
+    <div className='flex flex-col flex-1 p-3 gap-4 w-2/4 ml-2'>
         <div className="w-full relative border-b border-zinc-600 p-2 flex justify-between items-center">
             <div className="flex justify-between w-full">
                 <div className="flex flex-col gap-2">
