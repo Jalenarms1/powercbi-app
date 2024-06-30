@@ -39,7 +39,7 @@ export const Home = () => {
   return (
     <div className='flex flex-col p-3 w-full gap-4'>
         <div className="w-full relative border-b border-zinc-600 p-2 flex justify-between items-center">
-            <p className="text-3xl text-black font-semibold">Report Containers</p>
+            <p className="text-3xl text-black font-semibold">Report Groups</p>
             <div className="flex gap-4">
                 <div className="relative">
                     <input onChange={handleSearchInput} type="text" className='p-1 rounded-md bg-zinc-200 shadow-sm shadow-zinc-200 pr-8' placeholder='Search for a container' />

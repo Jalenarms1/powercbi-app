@@ -40,7 +40,6 @@ export const ReportContextProvider  = ({children}) => {
         setCurrentReportData(data)
     }
 
-    console.log(reports);
     return <ReportContext.Provider value={{submitReport, getReports, reports, currentReport, getReport, getReportData, currentReportData}}>
         {children}
     </ReportContext.Provider>

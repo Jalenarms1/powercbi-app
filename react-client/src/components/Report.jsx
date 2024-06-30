@@ -7,6 +7,7 @@ import { VscLoading } from "react-icons/vsc";
 import { PreviewData } from './PreviewData';
 import { ReportNav } from './ReportNav';
 import { CreateJob } from './CreateJob';
+import { Jobs } from './Jobs';
 
 
 
@@ -38,16 +39,17 @@ export const Report = () => {
     }
 
   return (
-    <div className='flex flex-col flex-1 p-3 gap-4 w-2/4 ml-2'>
-        <div className="w-full relative border-b border-zinc-600 p-2 flex justify-between items-center">
+    <div className='flex flex-col flex-1 p-3 gap-4 w-2/4 ml-2 pb-20'>
+        <div className="w-full relative border-b border-zinc-700 p-2 flex justify-between items-center">
             <div className="flex justify-between w-full">
                 <div className="flex flex-col gap-2">
-                    {currentReport && <p className="text-3xl text-black font-semibold">{currentReport.title}</p>}
+                    {currentReport && <p className="text-4xl text-black font-semibold">{currentReport.title}</p>}
                     {currentContainer && <Link to={`/container/${currentContainer.uid}`} className="text-xl text-zinc-400 hover:underline hover:text-zinc-300">{currentContainer.label}</Link>}
 
                 </div>
                 <div className='flex gap-4 items-end'>
                     <ReportNav option={'Preview Data'} active={currentView == 'Preview Data'} onClick={() => toggleView('Preview Data')} />
+                    <ReportNav option={'Jobs'} active={currentView == 'Jobs'} onClick={() => toggleView('Jobs')} />
                     <ReportNav option={'Create Job'} active={currentView == 'Create Job'} onClick={() => toggleView('Create Job')}/>
                     <ReportNav option={'Job Logs'} active={currentView == 'Job Logs'} onClick={() => toggleView('Job Logs')}/>
                 </div>
@@ -56,7 +58,7 @@ export const Report = () => {
             {/* <AiTwotoneFolderAdd title='Add new report' className='text-3xl cursor-pointer active:scale-[.95] rounded-md' /> */}
         </div>
         {currentView == 'Preview Data' ? <PreviewData currentReport={currentReport} currentReportData={currentReportData} getReportData={getReportData} id={id} /> : currentView == 'Create Job' ? <CreateJob currentReport={currentReport} /> :
-        currentView == 'Job Logs' ? <div>Job Logs</div> : <div>None</div>}
+        currentView == 'Job Logs' ? <div>Job Logs</div> : currentView == 'Jobs' ? <Jobs currentReport={currentReport} /> : <div>None</div>}
         {/* <PreviewData currentReport={currentReport} currentReportData={currentReportData} getReportData={getReportData} id={id} /> */}
     </div>
   )

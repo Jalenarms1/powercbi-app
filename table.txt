@@ -16,3 +16,15 @@ CREATE TABLE Report (
     createdBy NVARCHAR(250) NOT NULL,
     createdAt DATETIME DEFAULT GETDATE()
 );
+
+CREATE TABLE ReportJob (
+    uid UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    reportId uniqueidentifier,
+    title NVARCHAR(max),
+    distribution nvarchar(max),
+    distributeTo NVARCHAR(max),
+    frequency NVARCHAR(50),
+    nextRun datetime,
+    hour NVARCHAR(50),
+    active int default 1
+);

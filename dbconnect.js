@@ -30,10 +30,12 @@ async function execQuery(query) {
 
 const CONTAINER_TABLE = 'Container'
 const REPORT_TABLE = 'Report'
+const JOB_TABLE = 'ReportJob'
 
 module.exports = {
   getConnection,
   execQuery,
   CONTAINER_TABLE,
-  REPORT_TABLE
+  REPORT_TABLE,
+  JOB_TABLE
 };
