@@ -61,4 +61,14 @@ router.get('/report/data', async (req, res) => {
     res.json(data)
 })
 
+router.get('/report/my-reports', async (req, res) => {
+    const {user} = req.query
+
+    const query = `select * from ${REPORT_TABLE} where createdBy = '${user}'`
+
+    const resp = await execQuery(query)
+
+    res.json(resp)
+})
+
 module.exports = router

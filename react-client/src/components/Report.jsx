@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useReportContext } from '../context/ReportContext'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { AiTwotoneFolderAdd } from 'react-icons/ai'
 import { useContainerContext } from '../context/ContainerContext';
 import { VscLoading } from "react-icons/vsc";
@@ -14,9 +14,11 @@ import { Jobs } from './Jobs';
 export const Report = () => {
 
     const {id} = useParams()
+    const queryStr = new URLSearchParams(useLocation().search);
+    const setView = queryStr.get('view')
     const {currentReport, getReport, getReportData, currentReportData} = useReportContext()
     const {currentContainer, getContainer} = useContainerContext()
-    const [currentView, setCurrentView] = useState('Preview Data')
+    const [currentView, setCurrentView] = useState(setView ?? 'Preview Data')
 
     useEffect(() => {
         if(!currentReport || (currentReport && currentReport.uid != id)) {

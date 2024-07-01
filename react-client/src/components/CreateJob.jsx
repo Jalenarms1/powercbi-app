@@ -19,6 +19,7 @@ export const CreateJob = ({currentReport}) => {
     const [inputErr, setInputErr] = useState(false)
 
 
+
     const validateEmail = (email) => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(String(email).toLowerCase());
@@ -77,7 +78,7 @@ export const CreateJob = ({currentReport}) => {
             console.log(resp);
 
             if(resp.status == 200) {
-                window.location.reload()
+                window.location.replace(`/report/${currentReport.uid}?view=Jobs`)
             } else {
                 setInputErr(true)
             }
@@ -101,7 +102,7 @@ export const CreateJob = ({currentReport}) => {
             <div className="flex gap-10">
                 <div className="flex flex-col gap-2">
                     <label htmlFor="job-title" className='font-semibold'>Title</label>
-                    <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" placeholder='Title' className='shadow p-1 rounded-md placeholder:text-zinc-700'  />
+                    <input maxLength={100} value={title} onChange={(e) => setTitle(e.target.value)} type="text" placeholder='Title' className='shadow p-1 rounded-md placeholder:text-zinc-700'  />
                 </div>
                 <div className="flex flex-col gap-2">
                     <label htmlFor="job-distribution" className='font-semibold'>Distibution</label>

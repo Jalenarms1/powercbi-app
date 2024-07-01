@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { get, put } from '../utils'
 import DynamicTable from './DynamicTable'
+import { VscLoading } from 'react-icons/vsc'
 
 export const Jobs = ({currentReport}) => {
 
@@ -23,9 +24,11 @@ export const Jobs = ({currentReport}) => {
     }
 
     useEffect(() => {
+        if(currentReport?.uid) {
+            getJobs()
 
-        getJobs()
-    }, [])
+        }
+    }, [currentReport])
 
     useEffect(() => {
         if(jobs) {

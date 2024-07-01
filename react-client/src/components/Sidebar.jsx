@@ -25,7 +25,7 @@ export const Sidebar = ({path}) => {
         <h2 className="text-white text-4xl  title-font font-semibold p-3 overflow-x-hidden">PowerCBI</h2>
         <div className="text-white flex flex-col gap-1 p-2 overflow-x-hidden">
           <Link to={'/'} className={` hover:bg-slate-800 ${path == '/' ? 'bg-slate-800' : ''} rounded-md p-1 `}>Home</Link>
-          <Link to={'/'} className=" hover:bg-slate-800 rounded-md p-1">My Reports</Link>
+          <Link to={'/my-reports'} className={` hover:bg-slate-800 ${path == '/my-reports' ? 'bg-slate-800' : ''} rounded-md p-1`}>My Reports</Link>
           <Link to={'/'} className=" hover:bg-slate-800 rounded-md p-1">Report Request</Link>
           <Link to={'/'} className=" hover:bg-slate-800 rounded-md p-1">Support</Link>
           

@@ -119,7 +119,7 @@ export const NewReport = ({closeModal, containerId}) => {
             <div className="flex flex-wrap w-full gap-6">
                 <div className="flex flex-col">
                     <label htmlFor="report-title">Title</label>
-                    <input value={reportTitle} onChange={(e) => setReportTitle(e.target.value)} type="text" id='report-title' placeholder='Title...' className='p-1 rounded-md' />
+                    <input maxLength={200} value={reportTitle} onChange={(e) => setReportTitle(e.target.value)} type="text" id='report-title' placeholder='Title...' className='p-1 rounded-md' />
                 </div>
                 <div className="flex flex-col gap-4 w-72">
                     <div className="flex flex-col">

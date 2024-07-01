@@ -66,12 +66,12 @@ export const NewContainer = ({closeModal}) => {
 
                 <div className="flex flex-col gap-1">
                     <label className='font-semibold' htmlFor="container-label">Label</label>
-                    <input onChange={handleContainerChange} value={container.label} name='label' className='p-1 rounded-md' type="text" id='container-label' placeholder='Label' />
+                    <input maxLength={100} onChange={handleContainerChange} value={container.label} name='label' className='p-1 rounded-md' type="text" id='container-label' placeholder='Label' />
 
                 </div>
                 <div className="flex flex-col gap-1">
                     <label className='font-semibold' htmlFor="container-desc">Description</label>
-                    <input onChange={handleContainerChange} value={container.description} name='description' className='p-1 rounded-md' type="text" id='container-desc' placeholder='Description' />
+                    <input maxLength={250} onChange={handleContainerChange} value={container.description} name='description' className='p-1 rounded-md' type="text" id='container-desc' placeholder='Description' />
 
                 </div>
             </div>
