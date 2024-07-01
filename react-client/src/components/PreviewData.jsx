@@ -4,6 +4,7 @@ import { DataTable } from './DataTable';
 import MUIDataTable from 'mui-datatables'
 import {createTheme, ThemeProvider} from '@mui/material/styles'
 import { formatDateIfDate } from '../utils';
+import DataTableV2 from './DataTableV2';
 
 
 export const PreviewData = ({currentReport, currentReportData, getReportData, id}) => {
@@ -139,13 +140,14 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
         {currentReportData && (
             <div style={{ height: '100vh' }}>
                 <ThemeProvider theme={getMuiTheme()}>
-                <MUIDataTable
-                    title={""}
-                    data={currentReportData}
-                    columns={createColumns(currentReport.columnList.split(","))}
-                    options={options}
-                />
+                    <MUIDataTable
+                        title={""}
+                        data={currentReportData}
+                        columns={createColumns(currentReport.columnList.split(","))}
+                        options={options}
+                    />
                 </ThemeProvider>
+                <DataTableV2 columns={currentReport.columnList.split(",")} data={currentReportData} />
             </div>
             
         )}

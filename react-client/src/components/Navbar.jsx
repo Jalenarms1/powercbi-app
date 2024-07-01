@@ -27,11 +27,11 @@ export const Navbar = ({path}) => {
             <img src={logo} alt="cbi logo" className='w-52' />
         </div>
         <div className='flex items-center gap-6 '>
-          <NavItem label={"Home"} path={"/"} active={path == '/'} />
-          <NavItem label={"My Reports"} path={"/my-reports"} active={path == '/my-reports'} />
-          <NavItem label={"Request Report"} path={"/request-report"} active={path == '/request-report'} />
-          {!confirmLogout && <IoIosLogOut onClick={() => setConfirmLogout(true)} className='text-white text-2xl cursor-pointer active:text-zinc-300' />}
-          {confirmLogout && <IoIosLogOut onClick={logoutUser} className='text-white text-2xl cursor-pointer active:text-zinc-300 bg-red-600 rounded-md shadow-md shadow-red-600' />}
+          {/* <NavItem label={"Home"} path={"/"} active={path == '/'} /> */}
+          {/* <NavItem label={"My Reports"} path={"/my-reports"} active={path == '/my-reports'} /> */}
+          {/* <NavItem label={"Request Report"} path={"/request-report"} active={path == '/request-report'} /> */}
+          {!confirmLogout && <IoIosLogOut onClick={() => setConfirmLogout(true)} className='text-white text-2xl cursor-pointer active:text-zinc-300 p-1' />}
+          {confirmLogout && <IoIosLogOut onClick={logoutUser} className='text-white text-2xl cursor-pointer active:text-zinc-300 bg-red-600 rounded-sm p-1 ' />}
 
         </div>
       </div>}

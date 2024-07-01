@@ -73,7 +73,7 @@ export const CreateJob = ({currentReport}) => {
         if(title.trim() != '' && distributeTo?.length > 0 && frequency && day && hour) {
             console.log({title, distributeTo, frequency, day, hour});
 
-            const resp = await post('/job/add', {reportId: currentReport.uid, title, distribution, distributeTo: distributeTo.join(','), frequency, startDate: day, hour})
+            const resp = await post('/job/add', {reportId: currentReport.uid, title, distribution, distributeTo: distributeTo.join(', '), frequency, startDate: day, hour})
 
             console.log(resp);
 

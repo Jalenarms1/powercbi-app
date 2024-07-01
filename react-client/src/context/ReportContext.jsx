@@ -39,7 +39,7 @@ export const ReportContextProvider  = ({children}) => {
         setCurrentReportData(null)
         const {data} = await get(`/report/data?dataSource=${dataSource}&dataSourceType=${dataSourceType}&columnList=${columnList}`)
 
-        setCurrentReportData(data)
+        setCurrentReportData(data.data)
     }
 
     const getMyReports = async () => {

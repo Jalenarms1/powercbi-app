@@ -1,4 +1,5 @@
 const { execQuery, REPORT_TABLE } = require("../../dbconnect")
+const { redisGet, redisAdd } = require("../../redis")
 
 const router = require("express").Router()
 
@@ -55,10 +56,31 @@ router.get('/report/data', async (req, res) => {
 
     const data = await execQuery(dataQuery)
 
-    console.log('data', data);
+    console.log('data', data.length);
+
+    await redisAdd(dataSource, data)
+
+    if(data.length > 100) {
+        res.json({data: data.slice(0, 100), count: data.length})
+    } else {
+        res.json({data})
+
+    }
 
 
-    res.json(data)
+
+})
+
+router.get('/report/data/:page', async (req, res) => {
+    const {redisKey, numberOfRecords} = req.query
+    const {page} = req.params
+
+    const data = await redisGet(redisKey)
+
+    const start = (page - 1) * numberOfRecords;
+    const end = start + recordsPerPage;
+
+    res.json(data.slice(start, end))
 })
 
 router.get('/report/my-reports', async (req, res) => {

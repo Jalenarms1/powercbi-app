@@ -1,5 +1,8 @@
 import React from 'react';
 import { formatDateIfDate } from '../utils';
+import { CiSettings } from "react-icons/ci";
+
+
 
 const ActiveColCell = ({value, onToggle}) => {
 
@@ -11,13 +14,14 @@ const ActiveColCell = ({value, onToggle}) => {
     )
 }
 
-const DynamicTable = ({ data, columns, onActiveToggle }) => {
+const DynamicTable = ({ data, columns, onActiveToggle, onUpdateToggle }) => {
 
    
     
 
   return (
     <div className="overflow-x-auto">
+       
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
           <tr className="bg-gray-50">
@@ -25,6 +29,7 @@ const DynamicTable = ({ data, columns, onActiveToggle }) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{col}</th>
 
             ))}
+            <th></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -33,8 +38,10 @@ const DynamicTable = ({ data, columns, onActiveToggle }) => {
               {columns.map((k, i) => (
                 <td key={i} className="px-6 py-4 whitespace-nowrap">{k == 'active' ? <ActiveColCell onToggle={() => onActiveToggle(row['uid'], row['active'])} value={row[k]} /> : formatDateIfDate(row[k])}</td>
               ))}
+              <td className="px-6 py-4 whitespace-nowrap"><CiSettings onClick={() => onUpdateToggle(row)} className='text-2xl cursor-pointer active:text-xl' /></td>
             </tr>
           ))}
+
         </tbody>
       </table>
     </div>
