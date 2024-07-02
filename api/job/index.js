@@ -47,7 +47,7 @@ router.post("/job/add", async (req, res) => {
 router.get('/job/list', async (req, res) => {
     const {reportId} = req.query
 
-    const query = `select * from ReportJob where reportId = '${reportId}'`
+    const query = `select * from ${JOB_TABLE} where reportId = '${reportId}'`
 
     const resp = await execQuery(query)
 
