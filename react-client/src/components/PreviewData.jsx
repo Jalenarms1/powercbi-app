@@ -139,15 +139,16 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
         </div>
         {currentReportData && (
             <div style={{ height: '100vh' }}>
-                <ThemeProvider theme={getMuiTheme()}>
+                {/* <ThemeProvider theme={getMuiTheme()}>
                     <MUIDataTable
                         title={""}
                         data={currentReportData}
                         columns={createColumns(currentReport.columnList.split(","))}
                         options={options}
                     />
-                </ThemeProvider>
-                <DataTableV2 columns={currentReport.columnList.split(",")} data={currentReportData} />
+                </ThemeProvider> */}
+                {/* <DataTableV2 columns={currentReport.columnList.split(",")} data={currentReportData} /> */}
+                <DataTable columns={currentReport?.columnList.split(",")} data={currentReportData} setSelectedValue={setSelectedValue} />
             </div>
             
         )}

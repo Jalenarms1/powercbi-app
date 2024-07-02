@@ -6,7 +6,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { formatDateIfDate } from '../utils';
 
 const columns = [
   { id: 'name', label: 'Name', minWidth: 170 },
@@ -37,9 +38,9 @@ const columns = [
 
 
 export default function DataTableV2({data, columns}) {
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [dataStore, setDataStore] = useState([])
+  const [currData, setCurrentData] = useState(null)
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -50,38 +51,49 @@ export default function DataTableV2({data, columns}) {
     setPage(0);
   };
 
-//   useEffect(() => {
+  useEffect(() => {
+    if (data) {
+        setCurrentData(data)
+    }
 
-//   },)
+  }, [data])
+
+  if(!currData) {
+    return (
+        <div>
+            <p>None.</p>
+        </div>
+    )
+  }
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
+        <Table stickyHeader aria-label="sticky table" >
           <TableHead>
-            <TableRow>
+            <TableRow className='bg-slate-900 text-white'>
               {columns.map((column) => (
                 <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
+                  key={column}
+                  className='min-w-[20vw] max-w-[25vw] bg-slate-900! text-white'
+                  
                 >
-                  {column.label}
+                  {column}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
+            {currData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row}>
                     {columns.map((column, indx) => {
-                      const value = row[column.id];
+                      const value = row[column];
                       return (
-                        <TableCell key={indx}>
-                          {value}
+                        <TableCell key={indx} className='truncate'>
+                          {formatDateIfDate(value)}
                         </TableCell>
                       );
                     })}
@@ -91,14 +103,14 @@ export default function DataTableV2({data, columns}) {
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
+      {/* <TablePagination
         component="div"
-        count={rows.length}
-        rowsPerPage={100}
+        count={currData.length}
+        rowsPerPage={currData.length}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      /> */}
     </Paper>
   );
 }

@@ -60,12 +60,14 @@ router.get('/report/data', async (req, res) => {
 
     await redisAdd(dataSource, data)
 
-    if(data.length > 100) {
-        res.json({data: data.slice(0, 100), count: data.length})
-    } else {
-        res.json({data})
+    // if(data.length > 100) {
+    //     res.json({data: data.slice(0, 100), count: data.length})
+    // } else {
+    //     res.json({data})
 
-    }
+    // }
+
+    res.json({data})
 
 
 

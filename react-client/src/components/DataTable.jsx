@@ -6,159 +6,127 @@ import { DataFilter } from './Modals/DataFilter';
 import { formatDateIfDate } from '../utils';
 
 
-export const DataTable = ({currentReport, currentReportData, setSelectedValue}) => {
+export const DataTable = ({columns, data, setSelectedValue}) => {
 
-    const [dataColumns, setDataColumns] = useState(null)
-    const [data, setData] = useState(null)
+    const [colList, setColList] = useState(null)
+    const [currData, setCurrData] = useState(null)
     const [sortList, setSortList] = useState([])
+    const [openColumnFilter, setOpenColumnFilter] = useState(false)
     const [filters, setFilters] = useState([])
-    const [openColumnFilter, setOpenColumnFilter] = useState(null)
-    const [checkAll, setCheckAll] = useState(true)
-    const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 100;
-    const totalPages = Math.ceil(data.length / rowsPerPage);
 
-    const handlePageJump = (e) => {
-        const pageNumber = Number(e.target.value);
-        if (pageNumber >= 1 && pageNumber <= totalPages) {
-        setCurrentPage(pageNumber);
-        }
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-        setCurrentPage((prevPage) => prevPage + 1);
-        }
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-        setCurrentPage((prevPage) => prevPage - 1);
-        }
-    };
-
-    const paginatedData = data.slice(
-        (currentPage - 1) * rowsPerPage,
-        currentPage * rowsPerPage
-    );
-
-
-    useEffect(() => {
-        setData(currentReportData)
-    }, [currentReportData])
-
-    useEffect(() => {
-        setDataColumns(currentReport?.columnList.split(","))
-    }, [currentReport])
-
-    
-
-    useEffect(() => {
-        if(checkAll) {
-            setFilters(filters.filter(f => f.column != openColumnFilter))
-        } else {
-            if(currentReport && currentReportData) {
-                let filterArr = []
-                currentReport?.columnList.split(",").forEach(c => {
-                    let obj = {}
-                    obj['column'] = c
-                    obj['values'] = []
-                    currentReportData?.forEach(d => {
-                        if (!obj['values'].includes(d[c])) {
-                            obj['values'] = [...obj['values'], d[c]]
-
-                        }
-                    })
-                    filterArr = [...filterArr, obj]
-
-                })
-                console.log('filterArr', filterArr);
-                setFilters(filterArr)
-
+    const toggleSort = (col) => {
+        console.log('toggleSort', col);
+        if(sortList?.filter(s => s.name == col).length > 0) {
+            if(sortList.find(s => s.name == col).sort == 'asc'){
+                setSortList([...sortList.filter(s => s.name != col), {name:col, sort: 'desc'}])
+            } else {
+                setSortList([...sortList.filter(s => s.name != col)])
             }
+        } else {
+            setSortList([...sortList, {name:col, sort: 'asc'}])
         }
-    }, [checkAll])
-
-    
+    }
 
     const toggleFilter = (col, val) => {
-        console.log(col);
-        console.log(val);
-        if (filters.filter(f => f.column == col).length < 1) {
-            setFilters([...filters, {column:col, values: [val]}])
-        } else {
-            
-
-            if(filters.find(f => f.column == col).values.includes(val)) {
-                if(filters.find(f => f.column == col).values.length == 1) {
-                    setFilters(filters.filter(f => f.column != col))
+        if(filters.filter(f => f.name == col).length > 0) {
+            if(filters.find(f => f.name == col).values.includes(val)) {
+                if(filters.find(f => f.name == col).values.length == 1) {
+                    setFilters(filters.filter(f => f.name != col))
                 } else {
-                    setFilters(() => {
-                        return filters.map(f => {
-                            if (f.column == col) {
-                                console.log('logging ' + col + val, {
-                                    ...f,
-                                    values: f.values.filter(v => v != val)
-                                });
-                                return {
-                                    ...f,
-                                    values: f.values.filter(v => v != val)
-                                }
-                            } else {
-                                return f
-                            }
-                        })
-                    })
+                    setFilters([...filters.filter(f => f.name != col), {name: col, values: [...filters.find(f => f.name == col).values.filter(v => v != val)]}])
 
                 }
             } else {
-                console.log('adding');
-                setFilters(() => {
-                    return filters.map(f => {
-                        if (f.column == col) {
-                            return {
-                                ...f,
-                                values: [...f.values, val]
-                            }
-                        } else {
-                            return f
-                        }
-                    })
-                })
+                setFilters([...filters.filter(f => f.name != col), {name: col, values: [...filters.find(f => f.name == col).values, val]}])
             }
-        } 
-
-        
-    }
-
-    const toggleSort = (col) => {
-        if (sortList.filter(s => s.column == col).length < 1) {
-            setSortList([...sortList, {column: col, sort: 'asc'}])
-        } else if (sortList.find(s => s.column == col).sort == 'asc') {
-            setSortList(() => {
-                return sortList.map(i => {
-                    if (i.column == col) {
-                        return {
-                            ...i,
-                            sort: 'desc'
-                        }
-                    } else {
-                        return i
-                    }
-                })
-            })
-        } else if (sortList.find(s => s.column == col).sort == 'desc') {
-            setSortList(sortList.filter(i => i.column != col))
+        } else {
+            setFilters([...filters, {name: col, values: [val]}])
         }
     }
 
+    const clearColFilter = (col) => {
+        setFilters([...filters.filter(f => f.name != col)])
+    }
+   
+
     useEffect(() => {
-        if (currentReportData) {
-            let currData = currentReportData
+        if(data) {
+            setCurrData(data)
+
+        }
+    }, [data])
+
+    useEffect(() => {
+        if (columns ){
+            setColList(columns)
+
+        }
+    }, [columns])
+
+    const sortData = (initData) => {
+        let cData = initData
+        sortList.forEach(s => {
+            cData =  [...currData].sort((a, b) => {
+                let comparison = 0;
+                const valueA = a[s.name];
+                const valueB = b[s.name];
+            
+                // Handle sorting based on data type
+                if (typeof valueA === 'number' && typeof valueB === 'number') {
+                    comparison = valueA - valueB;
+                } else if (typeof valueA === 'string' && typeof valueB === 'string') {
+                    comparison = valueA.localeCompare(valueB);
+                } else if (valueA instanceof Date && valueB instanceof Date) {
+                    comparison = valueA.getTime() - valueB.getTime();
+                } else {
+                    // Handle other data types or mixed types as needed
+                    comparison = String(valueA).localeCompare(String(valueB));
+                }
+            
+                // Adjust comparison based on sort direction
+                return s.sort === 'asc' ? comparison : -comparison;
+            });
+        }) 
+        return cData
+    }
+
+    const filterData = (initData) => {
+        let cData = initData
+
+        filters.forEach(f => {
+            cData = [...cData].filter(d => {
+                console.log(f.name);
+                console.log(d[f.name]);
+                console.log(f.values);
+                return f.values.includes(d[f.name])
+            })
+        })
+
+        return cData
+    }
+
+    // useEffect(() => {
+    //     if(sortList?.length > 0) {
+    //         let cData = []
+    //         cData = sortData(data)
+
+    //         cData = filterData(cData)
+    //         setCurrData(cData)
+    //     } else {
+    //         if(filters.length == 0) {
+
+    //             setCurrData(data)
+    //         }
+    //     }
+    // }, [sortList])
+
+    useEffect(() => {
+        if(currData) {
+            let cData = data
             if (filters.length > 0) {
                 filters.forEach(f => {
-                    currData = [...currData].filter(d => {
-                        return !f.values.includes(d[f.column])
+                    cData = [...cData].filter(d => {
+                        return f.values.includes(d[f.name])
                     })
                 })
     
@@ -167,10 +135,10 @@ export const DataTable = ({currentReport, currentReportData, setSelectedValue}) 
             if(sortList.length > 0) {
 
                 sortList.forEach(s => {
-                    currData =  [...currData].sort((a, b) => {
+                    cData =  [...cData].sort((a, b) => {
                         let comparison = 0;
-                        const valueA = a[s.column];
-                        const valueB = b[s.column];
+                        const valueA = a[s.name];
+                        const valueB = b[s.name];
                   
                         // Handle sorting based on data type
                         if (typeof valueA === 'number' && typeof valueB === 'number') {
@@ -189,28 +157,29 @@ export const DataTable = ({currentReport, currentReportData, setSelectedValue}) 
                     });
                 }) 
             }
-            setData(currData)
-            
-        }
-    }, [sortList, filters, currentReport])
+            setCurrData(cData)
 
+        }
+    }, [filters, sortList])
+
+
+    console.log('filters', filters);
     
-  
 
   return (
-    <div className=" w-[97vw] h-[95vh] overflow-auto  rounded-md shadow-sm shadow-zinc-300 relative">
-        {openColumnFilter && <DataFilter checkAll={checkAll} setCheckAll={setCheckAll} currentReportData={currentReportData} data={data} openColumnFilter={openColumnFilter} toggleFilter={toggleFilter} setOpenColumnFilter={setOpenColumnFilter}  />}
-        {data && <div className='bg-zinc-100 rounded-md flex flex-col w-fit relative '>
+    <div className=" w-full h-[95vh] overflow-auto  rounded-md shadow-sm shadow-zinc-300 relative">
+        {openColumnFilter && <DataFilter clearColFilter={clearColFilter} filters={filters} data={data} openColumnFilter={openColumnFilter} toggleFilter={toggleFilter} setOpenColumnFilter={setOpenColumnFilter}  />}
+        {currData && <div className='bg-zinc-100 rounded-md flex flex-col w-fit relative '>
             
             <div id="table-header" className='flex bg-slate-900 text-white sticky top-0'>
-                {dataColumns.map((c, i) => (
+                {colList.map((c, i) => (
                     <div className='w-[300px] p-3 flex justify-between items-center '>
                         <div className="flex items-center gap-2">
                             <p onClick={() => toggleSort(c)} className='cursor-pointer' key={i} >{c}</p>
-                            {sortList.find(s => s.column == c)?.sort == 'asc' && <FaLongArrowAltUp />}
-                            {sortList.find(s => s.column == c)?.sort == 'desc' &&<FaLongArrowAltDown />}
+                            {sortList?.find(s => s.name == c)?.sort == 'asc' && <FaLongArrowAltUp />}
+                            {sortList?.find(s => s.name == c)?.sort == 'desc' &&<FaLongArrowAltDown />}
                         </div>
-                        <IoFilter onClick={openColumnFilter == c ? () => setOpenColumnFilter(null) : () => setOpenColumnFilter(c)} className={`cursor-pointer ${ filters.filter(f => f.column == c).length > 0 ? 'text-green-500' : ''} scale-[.95]`} />
+                        <IoFilter onClick={openColumnFilter == c ? () => setOpenColumnFilter(null) : () => setOpenColumnFilter(c)} className={`cursor-pointer ${ filters?.filter(f => f.name == c).length > 0 ? 'text-green-500' : ''} scale-[.95]`} />
                         
                     </div>
                 ))}
@@ -218,10 +187,10 @@ export const DataTable = ({currentReport, currentReportData, setSelectedValue}) 
             </div>
             
             <div className='flex flex-col'>
-                {paginatedData.map((d, i) => (
+                {currData.map((d, i) => (
                     <div className={`flex ${i % 2 == 0 ? 'bg-zinc-300' : 'bg-zinc-200'} `}>
-                        {dataColumns.map((c, i) => (
-                            <p onClick={() => setSelectedValue(d[c])} className='w-[300px] p-3  truncate cursor-pointer hover:shadow-inner'>{formatDateIfDate(d[c])}</p>
+                        {colList.map((c, i) => (
+                            <p onClick={() => setSelectedValue(d[c])} className='w-[300px] p-3  truncate cursor-pointer hover:shadow-inner'>{(['true', 'false'].includes(`${d[c]}`) && !['true', 'false'].includes(d[c])) ?`${d[c]}` : formatDateIfDate(d[c])}</p>
                         ))}
                     </div>
                 ))}
