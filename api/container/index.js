@@ -23,6 +23,7 @@ router.get('/container/list', async (req, res) => {
 })
 
 router.get('/container/:id', async (req, res) => {
+    console.log(req.params.id);
     const resp = await execQuery(`select uid, label, description, rolesAllowed from ${CONTAINER_TABLE} where uid = '${req.params.id}'`)
 
     return res.json(resp)

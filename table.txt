@@ -11,11 +11,25 @@ CREATE TABLE Report (
     uid UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     containerId UNIQUEIDENTIFIER NOT NULL,
     title NVARCHAR(250) NOT NULL,
-    dataSource NVARCHAR(MAX) NOT NULL,
-    dataSourceType NVARCHAR(100) NOT NULL,
     createdBy NVARCHAR(250) NOT NULL,
     createdAt DATETIME DEFAULT GETDATE()
 );
+
+CREATE TABLE DataSheet (
+    uid UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    reportId UNIQUEIDENTIFIER NOT NULL,
+    title nvarchar(250) not null,
+    dataSource nvarchar(max) not null
+    dataSourceType nvarchar(100) not null
+    dataQuery nvarchar(max) not null
+    columnList nvarchar(max) not null
+    filters nvarchar(max)
+    orderBy nvarchar(max)
+    createdBy nvarchar(250) not null
+    createdAt datetime default getdate()
+
+
+)
 
 CREATE TABLE ReportJob (
     uid UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),

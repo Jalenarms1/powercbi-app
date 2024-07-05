@@ -2,6 +2,10 @@ const { execQuery } = require("../../dbconnect")
 
 const router = require("express").Router()
 
+const replaceApos = (str) => {
+    return str .split("").map(c => c == "'" ? "''" : c).join("")
+}
+
 router.get('/master-list/data-sources', async (req, res) => {
     const viewData = await execQuery('select name, type_desc from sys.views')
     console.log(viewData);
@@ -40,22 +44,26 @@ router.get('/master-list/data-source-columns', async (req, res) => {
 
     } else {
         try {
-            const query = `SET FMTONLY ON;
-            ${req.query.exec};
-            SET FMTONLY OFF;
+            const query = `
+            SELECT 
+                name AS ColumnName,
+                system_type_name AS DataType,
+                is_nullable AS IsNullable
+            FROM 
+                sys.dm_exec_describe_first_result_set('${replaceApos(req.query.exec)}', NULL, 0);
             `
             console.log('query', query);
     
             const resp = await execQuery(query)
-    
-            console.log(resp.columns);
-    
-            const columns = resp.columns.map(r => {
-                const {name, dataTypeName} = r
+
+            console.log('resp', resp);
+
+            const columns = resp.map(r => {
+                const {ColumnName, DataType} = r
     
                 return {
-                    name, 
-                    dataType: dataTypeName,
+                    name: ColumnName, 
+                    dataType: DataType,
                     include: true
                 }
             })
@@ -63,6 +71,7 @@ router.get('/master-list/data-source-columns', async (req, res) => {
             res.json(columns)
             
         } catch (error) {
+            console.log(error);
             res.json({error: 'Error retrieving column info. Please make sure you have entered all necessary parameters.'})
         }
     }

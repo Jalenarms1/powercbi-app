@@ -5,159 +5,95 @@ import MUIDataTable from 'mui-datatables'
 import {createTheme, ThemeProvider} from '@mui/material/styles'
 import { formatDateIfDate } from '../utils';
 import DataTableV2 from './DataTableV2';
+import { VirtualizedTable } from './VirtualizedTable';
+import { DataSheet } from './DataSheet';
+import Dropdown from './Dropdown';
+import { useReportContext } from '../context/ReportContext';
+import { CiSettings } from "react-icons/ci";
+import { IoMdRefresh } from "react-icons/io";
+import { CiEdit } from "react-icons/ci";
+import { useAuth } from '../context/AuthContext';
+import { SheetSettings } from './SheetSettings';
+
+
 
 
 export const PreviewData = ({currentReport, currentReportData, getReportData, id}) => {
 
     const [dataLoading, setDataLoading] = useState(false)
-    const [selectedValue, setSelectedValue] = useState()
+    const [selectedValue, setSelectedValue] = useState(null)
+    const {getSheetData, currentSheetData, currentSheet, handleSetSheet, addSheet} = useReportContext()
+    const [showSheetSettings, setShowSheetSettings] = useState(false)
+    const [editSheetTitle, setEditSheetTitle] = useState(false)
+    const [newTitle, setNewTitle] = useState(null)
+    const {user} = useAuth()
+    
 
-
-    const handleGetData = (dataSource, dataSourceType, columnList) => {
+    const handleGetData = (currentSheet) => {
         setDataLoading(true)
-        getReportData(dataSource, dataSourceType, columnList)
+        getSheetData(currentSheet)
     }
+
 
     useEffect(() => {
-        if(currentReportData) {
+        if(currentSheetData) {
             setDataLoading(false)
         }
-    }, [currentReportData])
+    }, [currentSheetData])
 
-    const createColumns = (colList) => {
-        
-        return colList.map((name) => ({
-          name,
-          label: name,
-          options: {
-            customBodyRender: (value, tableMeta, updateValue) => {
-              // Manipulate the value here if needed
-              return <span className='truncate text-black w-[98%]'>{formatDateIfDate(value)}</span>;
-            },
-            setCellProps: () => ({
-              style: {
-                width: '300px', // Set fixed width for each column
-                maxWidth: '300px',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                
-              }
-            })
-          }
-        }));
-    };
+    
+    useEffect(() => {
+        if(currentReport) {
+            // handleSetSheet(currentReport.sheets[0])
+        }
+    }, [currentReport])
 
-    const options = {
-        selectableRows: false,
-        downloadOptions: {
-            filename: `${currentReport?.title}.csv`
-        },
-        print: false,
-        rowsPerPage: 100,
-        rowStyle: (data, dataIndex, rowIndex) => {
-            return rowIndex % 2 === 0 ? { backgroundColor: '#e4e4e7' } : { backgroundColor: '#ffffff' };
-          },
+    useEffect(() => {
+        if(currentSheet) {
+            // handleGetData(currentSheet)
+        }
+    }, [currentSheet])
+    
+
+    const sheetOpts = (sheetArr) => {
+        return sheetArr.map((s) => {
+            return {
+                ...s,
+                name: s.sheetTitle
+            }
+        })
     }
 
-    console.log('currentReportData', currentReportData)
-
-    const getMuiTheme = () =>
-        createTheme({
-            palette: {
-                background: {
-                    paper: '#0f172a'
-                },
-                mode: 'dark'
-            },
-            components: {
-            MUIDataTable: {
-                styleOverrides: {
-                    root: {
-                        height: '100%', // Ensure the table takes the full height
-                        display: 'flex',
-                        flexDirection: 'column',
-                        
-                    },
-                },
-            },
-            // MUIDataTableHeadCell: {
-            //     styleOverrides: {
-            //       root: {
-            //         color: '#fff', // Set the font color for the column headers
-            //       },
-            //     },
-            //   },
-            //   MuiSvgIcon: {
-            //     styleOverrides: {
-            //       root: {
-            //         color: '#fff', // Set the color for the icons
-            //       },
-            //     },
-            //   },
-            MUIDataTableBodyRow: {
-                styleOverrides: {
-                  root: {
-                    '&:nth-of-type(odd)': {
-                      backgroundColor: '#f9f9f9', // Set the background color for odd rows
-                    },
-                    '&:nth-of-type(even)': {
-                      backgroundColor: '#ffffff', // Set the background color for even rows
-                    },
-                  },
-                },
-            },
-            
-            MUIDataTableBody: {
-                styleOverrides: {
-                root: {
-                    flex: '1 1 auto', // Allow the body to grow and shrink
-                    
-                },
-                },
-            },
-            MUIDataTableFooter: {
-                styleOverrides: {
-                root: {
-                    flexShrink: 0, // Prevent the footer from shrinking
-                },
-                },
-            },
-        },
-    });
+    console.log('dataLoading', dataLoading);
+    console.log('currentSheetData', currentSheetData);
 
   return (
     <div className='  rounded-md flex flex-col flex-1 gap-4 p-2  overflow-x-hidden'>
-        <div className='flex justify-between '>
-            <p className='text-xl'>Preview Data</p>
-            <div className="flex items-end gap-4">
-                {selectedValue && <p className=''>Value: <span className='bg-white p-1 rounded-md shadow-sm shadow-zinc-400 w-64 ml-1'>{selectedValue}</span></p>}
-                {(!dataLoading && currentReportData) && <button onClick={() => handleGetData(currentReport.dataSource, currentReport.dataSourceType, currentReport.columnList)} className='bg-zinc-200 shadow-sm shadow-zinc-400 p-1 active:scale-[.95]'>Refresh</button>}
-
+        {/* {currentReport?.sheets.map()} */}
+        <div className='flex justify-between bg-zinc-100 shadow-md shadow-zinc-200 p-2'>
+            <div className="flex gap-2 items-center cursor-pointer">
+                {(currentSheet && !editSheetTitle) ? <p className='text-xl'>{currentSheet.sheetTitle}</p> : <input type='text' className='p-1' onChange={(e) => setNewTitle(e.target.value)} />}
+                { !editSheetTitle ? <CiEdit className='text-2xl' /> : <button className='p-1 bg-blue-400 text-white'>Save</button>}
             </div>
+            {!showSheetSettings ? <div className="flex items-end gap-2">
+                {selectedValue && <p className=''>Value: <span className='bg-white p-1 rounded-md shadow-sm shadow-zinc-400 w-64 ml-1'>{selectedValue}</span></p>}
+                {(!dataLoading && currentSheetData) && <IoMdRefresh title='Refresh' onClick={() => handleGetData(currentSheet)} className='bg-zinc-200 cursor-pointer shadow-sm shadow-zinc-300 text-3xl active:scale-[.95]' />}
+                <CiSettings onClick={() => setShowSheetSettings(true)} title='Settings' className='bg-zinc-200 text-black shadow-sm shadow-zinc-300 text-3xl active:scale-[.95] cursor-pointer' />
+            </div> : 
+            <div className="flex items-end gap-2">
+                <button onClick={() => setShowSheetSettings(false)} title='Settings' className='bg-zinc-200 text-black shadow-sm shadow-zinc-300 active:scale-[.95] p-1 rounded-sm'>Back</button>
+            </div>}
 
         </div>
-        {currentReportData && (
-            <div style={{ height: '100vh' }}>
-                {/* <ThemeProvider theme={getMuiTheme()}>
-                    <MUIDataTable
-                        title={""}
-                        data={currentReportData}
-                        columns={createColumns(currentReport.columnList.split(","))}
-                        options={options}
-                    />
-                </ThemeProvider> */}
-                {/* <DataTableV2 columns={currentReport.columnList.split(",")} data={currentReportData} /> */}
-                <DataTable columns={currentReport?.columnList.split(",")} data={currentReportData} setSelectedValue={setSelectedValue} />
+        {currentReport && <div className="w-full flex justify-end">
+            <div className="flex gap-2 items-end">
+                <p>Sheet:</p>
+                <Dropdown label={currentReport.sheets[0].sheetTitle} options={sheetOpts(currentReport.sheets)} onSelect={(option) => handleSetSheet(option)} />
+                <button onClick={() => addSheet(currentSheet)} className='px-3 py-1 bg-blue-500 text-white rounded-md active:scale-[.95] active:shadow-sm active:shadow-zinc-700'>+ Add sheet</button>
             </div>
-            
-        )}
-        {(!currentReportData) && <div className="h-96 w-full flex justify-center items-center shadow-sm shadow-zinc-400 pb-10">
-            {(!dataLoading) && <button onClick={() => handleGetData(currentReport.dataSource, currentReport.dataSourceType, currentReport.columnList)} className='bg-zinc-200 shadow-sm shadow-zinc-400 p-1 active:scale-[.95]'>Run report</button>}
-
-            {(dataLoading) && <VscLoading className='animate-spin text-6xl' />}
 
         </div>}
+        {!showSheetSettings ? <DataSheet setSelectedValue={setSelectedValue} currentSheet={currentSheet} currentSheetData={currentSheetData} handleGetData={handleGetData} dataLoading={dataLoading}  /> : <SheetSettings currentSheet={currentSheet}  />}
     </div>
   )
 }

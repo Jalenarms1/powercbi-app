@@ -47,6 +47,8 @@ const Dropdown = ({ options, label, onSelect }) => {
     };
   }, [dropdownRef]);
 
+  console.log('options', options);
+
   return (
     <div className="relative inline-block min-w-52" ref={dropdownRef}>
       <button 

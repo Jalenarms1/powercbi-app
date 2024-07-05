@@ -30,8 +30,8 @@ export const Navbar = ({path}) => {
           {/* <NavItem label={"Home"} path={"/"} active={path == '/'} /> */}
           {/* <NavItem label={"My Reports"} path={"/my-reports"} active={path == '/my-reports'} /> */}
           {/* <NavItem label={"Request Report"} path={"/request-report"} active={path == '/request-report'} /> */}
-          {!confirmLogout && <IoIosLogOut onClick={() => setConfirmLogout(true)} className='text-white text-2xl cursor-pointer active:text-zinc-300 p-1' />}
-          {confirmLogout && <IoIosLogOut onClick={logoutUser} className='text-white text-2xl cursor-pointer active:text-zinc-300 bg-red-600 rounded-sm p-1 ' />}
+          {!confirmLogout && <IoIosLogOut onClick={() => setConfirmLogout(true)} className='text-white text-2xl cursor-pointer active:text-zinc-300 ' />}
+          {confirmLogout && <IoIosLogOut onClick={logoutUser} className='text-white text-2xl cursor-pointer active:text-zinc-300 bg-red-600 rounded-sm  ' />}
 
         </div>
       </div>}

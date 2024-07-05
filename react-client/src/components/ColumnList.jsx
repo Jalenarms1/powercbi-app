@@ -42,7 +42,7 @@ export const ColumnList = ({ options, label, onSelect }) => {
   };
 
   useEffect(() => {
-    if (!optionList) {
+    if (options) {
       setOptionList(options);
     }
   }, [options]);

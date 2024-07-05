@@ -21,15 +21,15 @@ export const Report = () => {
     const [currentView, setCurrentView] = useState(setView ?? 'Preview Data')
 
     useEffect(() => {
-        if(!currentReport || (currentReport && currentReport.uid != id)) {
+        if(!currentReport || (currentReport && currentReport?.uid != id)) {
             getReport(id)
 
         }
     }, [id])
 
     useEffect(() => {
-        if(currentReport && !currentContainer) {
-            getContainer(currentReport.containerId)
+        if((currentReport && currentReport?.containerId) && !currentContainer) {
+            getContainer(currentReport?.containerId)
 
         }
     }, [currentReport])
@@ -39,6 +39,7 @@ export const Report = () => {
     const toggleView = (option) => {
         setCurrentView(option)
     }
+    console.log('currentReport', currentReport);
 
   return (
     <div className='flex flex-col flex-1 p-3 gap-4 w-2/4 ml-2 pb-20'>
@@ -59,7 +60,7 @@ export const Report = () => {
 
             {/* <AiTwotoneFolderAdd title='Add new report' className='text-3xl cursor-pointer active:scale-[.95] rounded-md' /> */}
         </div>
-        {currentView == 'Preview Data' ? <PreviewData currentReport={currentReport} currentReportData={currentReportData} getReportData={getReportData} id={id} /> : currentView == 'Create Job' ? <CreateJob currentReport={currentReport} /> :
+        {(currentView == 'Preview Data' && currentReport) ? <PreviewData currentReport={currentReport} currentReportData={currentReportData} getReportData={getReportData} id={id} /> : currentView == 'Create Job' ? <CreateJob currentReport={currentReport} /> :
         currentView == 'Job Logs' ? <div>Job Logs</div> : currentView == 'Jobs' ? <Jobs currentReport={currentReport} /> : <div>None</div>}
         {/* <PreviewData currentReport={currentReport} currentReportData={currentReportData} getReportData={getReportData} id={id} /> */}
     </div>

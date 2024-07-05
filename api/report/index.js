@@ -1,5 +1,6 @@
-const { execQuery, REPORT_TABLE } = require("../../dbconnect")
+const { execQuery, REPORT_TABLE, SHEET_TABLE } = require("../../dbconnect")
 const { redisGet, redisAdd } = require("../../redis")
+const {v4: uuid} = require("uuid")
 
 const router = require("express").Router()
 
@@ -12,9 +13,26 @@ router.post('/report/add', async (req, res) => {
 
     const now = new Date().toISOString()
 
-    const resp = await execQuery(`insert into ${REPORT_TABLE} (containerId, title, dataSource, dataSourceType, columnList, createdBy) values ('${containerId}','${replaceApos(title)}', '${replaceApos(dataSource)}', '${replaceApos(dataSourceType)}', '${replaceApos(columnList)}', '${replaceApos(user)}')`)
+    const reportId = uuid()
+
+    const resp = await execQuery(`insert into ${REPORT_TABLE} (uid, containerId, title, createdBy) values ('${reportId}', '${containerId}','${replaceApos(title)}', '${replaceApos(user)}')`)
 
     console.log(resp);
+
+    let dataQuery;
+    
+    if (dataSourceType == 'VIEW') {
+        dataQuery = `select ${columnList.split(",").map(c => `[${c}]`).join(",")} from ${dataSource}`
+    } else {
+        dataQuery = `select into #sp_data 
+        exec ${replaceApos(dataSource)};
+        
+        select ${columnList.split(",").map(c => `[${c}]`).join(",")} from #sp_data;
+        
+        drop table #sp_data;`
+    }
+    
+    const addInitDataSheet = await execQuery(`insert into ${SHEET_TABLE} (reportId, title, dataSource, dataSourceType, dataQuery, columnList, createdBy) values ('${reportId}','${replaceApos(title)}', '${replaceApos(dataSource)}', '${replaceApos(dataSourceType)}', '${dataQuery}', '${replaceApos(columnList)}', '${replaceApos(user)}')`)
 
     res.json(resp)
 })
@@ -22,7 +40,7 @@ router.post('/report/add', async (req, res) => {
 router.get('/report/list', async (req, res) => {
     const containerId = req.query.containerId
 
-    const data = await execQuery(`select uid, containerId, title, dataSource, dataSourceType, columnList, createdBy, createdAt  from ${REPORT_TABLE} where containerId = '${containerId}' order by createdAt`)
+    const data = await execQuery(`select uid, containerId, title, createdBy, createdAt  from ${REPORT_TABLE} where containerId = '${containerId}' order by createdAt`)
 
     res.json(data)
 })
@@ -30,15 +48,27 @@ router.get('/report/list', async (req, res) => {
 router.get(`/report/find`, async (req, res) => {
     const {reportId} = req.query
 
-    const data = await execQuery(`select uid, containerId, title, dataSource, dataSourceType, columnList, createdBy, createdAt from ${REPORT_TABLE} where uid = '${reportId}'`)
+    console.log(`select r.uid, r.containerId, r.title, s.title as [sheetTitle], s.dataSource, s.dataSourceType, s.columnList, r.createdBy, r.createdAt from ${REPORT_TABLE} r left join ${SHEET_TABLE} s on r.uid = s.reportId where r.uid = '${reportId}'`);
 
+    const data = await execQuery(`select r.uid, s.uid as [sheetId], r.containerId, r.title, s.title as [sheetTitle], s.dataQuery, s.dataSource, s.dataSourceType, s.columnList, s.filters, s.orderBy, r.createdBy, r.createdAt from ${REPORT_TABLE} r left join ${SHEET_TABLE} s on r.uid = s.reportId where r.uid = '${reportId}' order by s.createdAt`)
+    
 
-    res.json({...data[0]})
+    console.log('data', data);
+
+    const sheets = data.map((d) => {
+        const {sheetTitle, sheetId, dataQuery, dataSource, dataSourceType, columnList, filters, orderBy} = d
+
+        return {
+            uid: sheetId, sheetTitle, dataQuery, dataSource, dataSourceType, columnList, filters, orderBy
+        }
+    })
+
+    res.json({uid: data[0].uid, title: data[0].title, containerId: data[0].containerId, createdBy: data[0].createdBy, createdAt: data[0].createdAt, sheets: [...sheets]})
     
 })
 
 router.get('/report/data', async (req, res) => {
-    const {dataSource, dataSourceType, columnList} = req.query
+    const {dataSource, dataSourceType, columnList, reportId} = req.query
 
     let dataQuery;
 
@@ -52,6 +82,9 @@ router.get('/report/data', async (req, res) => {
         
         drop table #sp_data;`
     }
+
+    const newSheetQuery = `insert into ${SHEET_TABLE} (reportId, title, dataSource, dataSourceType, columnList) values ('${reportId}') `
+
     console.log('dataQuery', dataQuery);
 
     const data = await execQuery(dataQuery)
