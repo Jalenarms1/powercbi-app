@@ -96,7 +96,7 @@ export const CreateJob = ({currentReport}) => {
     <div className='flex flex-col gap-10  pb-44'>
         <div className="flex flex-col gap-4">
 
-            <div className='bg-zinc-200 shadow-sm shadow-zinc-400 p-1'>
+            <div className='bg-zinc-100 shadow-md shadow-zinc-200 p-1'>
                 <p className="text-xl font-semibold">Create a scheduled job for this report.</p>
             </div>
             <div className="flex gap-10">

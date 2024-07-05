@@ -3,7 +3,7 @@ import { get } from '../utils'
 import Dropdown from './Dropdown'
 import { ColumnList } from './ColumnList'
 
-export const SheetSettings = ({currentSheet}) => {
+export const SheetSettings = ({currentSheet, updateSheet, currentReport}) => {
 
     const [fieldsToUpd, setFieldsToUpd]= useState(null)
     const [dataSourceList, setDataScourceList] = useState(null)
@@ -14,6 +14,7 @@ export const SheetSettings = ({currentSheet}) => {
     useEffect(() => {
         if(currentSheet) {
             setDataSource({name: currentSheet.dataSource, type_desc: currentSheet.dataSourceType})
+            
         }
     }, [currentSheet])
 
@@ -26,7 +27,7 @@ export const SheetSettings = ({currentSheet}) => {
         const {data} = await get(`/master-list/data-source-columns${queryStr}`)
 
         let colData = data
-        if(dataSource.name == currentSheet.dataSource.split(" ")[0]) {  
+        if(dataSource.name == currentSheet.dataSource.split(" ")[0] || dataSource.name == currentSheet.dataSource) {  
             console.log('currentSource', dataSource);                  
             colData = colData.map(c => {
                 return {
@@ -51,13 +52,12 @@ export const SheetSettings = ({currentSheet}) => {
 
     useEffect(() => {
         if(dataSource) {
-            console.log(currentSheet.dataSource);
-            console.log(currentSheet.dataSource.split(" ")[0]);
-            console.log(dataSource.name == currentSheet.dataSource.split(" ")[0]);
-            console.log(dataSource.name);
+           
             if(dataSource.name == currentSheet.dataSource.split(" ")[0] || dataSource.name == currentSheet.dataSource) {
                 getColumns()
+                setParameters(currentSheet.parameters?.split(",") ?? [])
             } else {
+                setParameters([])
                 setDataSourceColumns(null)
 
             }
@@ -84,19 +84,42 @@ export const SheetSettings = ({currentSheet}) => {
         setParameters(paramList)
     }
 
+    useEffect(() => {
+        if(currentSheet) {
+            setParameters(currentSheet.parameters?.split(",") ?? [])
+        }
+    }, [currentSheet])
+
     console.log('dataSourceColumns', dataSourceColumns);
 
+    const handleSave = (col) => {
+
+        let dataQuery;
+
+        if (dataSource.type_desc == 'VIEW') {
+            dataQuery = `select ${dataSourceColumns.filter(f => f.include).map(c => c.name).join(",")} from ${dataSource.name}`
+        } else {
+            
+            dataQuery = `exec ${dataSource.name} ${parameters.map(p => `'${p}'`).join(", ")};`
+        }
+
+        updateSheet({dataSource: dataSource.name, parameters: parameters.join(','), dataSourceType:dataSource.type_desc, dataQuery, columnList: dataSourceColumns.filter(f => f.include).map(c => c.name).join(",")}, currentSheet.uid, currentReport.uid)
+    }
+
   return (
-    <div className='w-full flex flex-col h-[100vh]'>
+    <div className='w-full flex flex-col h-[100vh] gap-10'>
         <div className="flex gap-10 ">
             <div className="flex flex-col w-1/3 max-w-[25vw] gap-2">
                 <label htmlFor="upd-title" className='font-semibold'>Data source: <span className='font-normal ml-2'>{currentSheet.dataSource}</span></label>
                 <Dropdown label={'Select a data source'} options={dataSourceList} onSelect={(opt) => setDataSource(opt)} />
                 {(dataSource && dataSource.type_desc == 'SQL_STORED_PROCEDURE') && <div className="flex flex-col items-start gap-2">
-                    <p className="">Parameters</p>
+                    <div className="flex flex-col gap-4">
+                        <p>{dataSource.type_desc != 'VIEW' ? `exec ${dataSource.name} ${parameters.join(", ")}` : dataSource.name}</p>
+                        <p className="">Parameters</p>
+                    </div>
                     {parameters.map((p, i) => (
                         <div className="flex items-center gap-2">
-                            <input onChange={(e) => handleParameterInput(e, i)} value={parameters[i]} type='text' placeholder='Enter Parameter' className='p-1 rounded-md' />
+                            <input onChange={(e) => handleParameterInput(e, i)} value={parameters[i]} type='text' placeholder='Enter Parameter' className='p-1 rounded-md bg-zinc-100 shadow-sm shadow-zinc-300' />
                             <button onClick={() => handleRemoveParam(i)} className='text-center border border-zinc-800 font-semibold active:scale-[.95] p-1 px-2 rounded-md'>-</button>
                         </div>
                     
@@ -104,7 +127,7 @@ export const SheetSettings = ({currentSheet}) => {
                     <button className='border rounded-md border-zinc-800 active:scale-[.95] p-1 shadow-sm shadow-zinc-400' onClick={() => setParameters([...parameters, ''])}>+ Add parameter</button>
                 </div>}
             </div>
-            {dataSourceColumns ? <div className="flex flex-col w-1/3 gap-2">
+            {dataSourceColumns ? <div className="flex flex-col w-1/3 max-w-[25vw] gap-2">
                 <label htmlFor="upd-title" className='font-semibold'>Columns:</label>
                 <ColumnList label={'Select columns to show'} options={dataSourceColumns} onSelect={(opt) => setDataSourceColumns(dataSourceColumns.map(c => c.name == opt ? {...c, include: !c.include} : c))} />
             </div> : 
@@ -112,11 +135,12 @@ export const SheetSettings = ({currentSheet}) => {
                 <div className="flex flex-col gap-2">
                     <label htmlFor="upd-title" className='font-semibold'>Columns:</label>
 
-                    <button onClick={getColumns} className='bg-blue-500 text-white px-2 py-1 rounded-sm'>Confirm data source</button>
+                    <button onClick={getColumns} className='bg-blue-500 rounded-md text-white px-2 py-1'>Confirm data source</button>
                 </div>
             )}
 
         </div>
+        <button  disabled={!dataSourceColumns} onClick={handleSave} className={` ${dataSourceColumns ? 'bg-blue-500 hover:bg-blue-400 text-white active:scale-[.95]' : ' bg-zinc-300 text-zinc-200'}   shadow-md shadow-zinc-200 w-fit px-4 py-2 rounded-md`}>Save</button>
     </div>
   )
 }

@@ -20,6 +20,7 @@ CREATE TABLE DataSheet (
     reportId UNIQUEIDENTIFIER NOT NULL,
     title nvarchar(250) not null,
     dataSource nvarchar(max) not null
+    parameters nvarchar(max),
     dataSourceType nvarchar(100) not null
     dataQuery nvarchar(max) not null
     columnList nvarchar(max) not null

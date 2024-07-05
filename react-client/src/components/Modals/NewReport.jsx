@@ -32,7 +32,8 @@ export const NewReport = ({closeModal, containerId}) => {
             console.log('Submitted');
             await submitReport(
                 reportTitle, 
-                currentDataSource.type_desc == 'VIEW' ? currentDataSource.name : `${currentDataSource.name} ${parameters.map(p => `'${p}'`).join(',')}`, 
+                currentDataSource.name,
+                parameters.join(','), 
                 currentDataSource.type_desc, dataSourceColumns.filter(c => c.include).map(c => c.name).join(','),
                 containerId
             )

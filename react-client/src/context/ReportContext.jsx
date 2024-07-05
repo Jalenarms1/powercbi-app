@@ -1,5 +1,5 @@
 import { useContext, createContext, useState, useEffect } from "react";
-import { get, post } from "../utils";
+import { get, post, put } from "../utils";
 import { useAuth } from "./AuthContext";
 
 
@@ -17,9 +17,9 @@ export const ReportContextProvider  = ({children}) => {
 
     const {user} = useAuth()
 
-    const submitReport = async (title, dataSource, dataSourceType, columnList, containerId) => {
+    const submitReport = async (title, dataSource, parameters, dataSourceType, columnList, containerId) => {
         
-        const resp = await post('/report/add', {title, dataSource, dataSourceType, columnList, user: user.username, containerId})
+        const resp = await post('/report/add', {title, dataSource, parameters, dataSourceType, columnList, user: user.username, containerId})
     
         console.log(resp);
     }
@@ -35,7 +35,6 @@ export const ReportContextProvider  = ({children}) => {
         setCurrentReport(null)
         setCurrentReportData(null)
         const {data} = await get(`/report/find?reportId=${id}`)
-        console.log('REPORT', data);
 
         setCurrentReport(data)
     }
@@ -54,8 +53,8 @@ export const ReportContextProvider  = ({children}) => {
 
     const getSheetData = async (sheet) => {
         setCurrentSheetData(null)
-        const {data} = await get(`/sheet?sheetId=${sheet.uid}&dataSource=${sheet.dataSource}&dataSourceType=${sheet.dataSourceType}&columnList=${sheet.columnList}`)
-
+        const {data} = await get(`/sheet?sheetId=${sheet.uid}&dataSource=${sheet.dataSource}&dataSourceType=${sheet.dataSourceType}&columnList=${sheet.columnList}&parameters=${sheet.parameters}`)
+        console.log('data');
         setDataHx({...dataHx, [sheet.uid]: data})
         setCurrentSheetData(data)
 
@@ -73,6 +72,14 @@ export const ReportContextProvider  = ({children}) => {
 
     }
 
+    const updateSheet = async (fieldsToUpd, sheetId, reportId) => {
+        const {data} = await put(`/sheet/update?sheetId=${sheetId}`, fieldsToUpd)
+        getReport(reportId)
+        handleSetSheet(data)
+        setDataHx({...dataHx, [sheetId]: null})
+        // getSheetData(data)
+    }
+
     
 
     useEffect(() => {
@@ -83,7 +90,7 @@ export const ReportContextProvider  = ({children}) => {
 
     useEffect(() => {
         if(currentReport) {
-            handleSetSheet(currentReport.sheets[0])
+            handleSetSheet(currentSheet ?? currentReport?.sheets[0])
         }
 
     }, [currentReport])
@@ -99,7 +106,7 @@ export const ReportContextProvider  = ({children}) => {
         }
     }, [currentSheet])
 
-    return <ReportContext.Provider value={{submitReport, getReports, reports, currentReport, getReport, getReportData, currentReportData, getMyReports, myReports, currentSheet, currentSheetData, handleSetSheet, getSheetData, addSheet}}>
+    return <ReportContext.Provider value={{submitReport, getReports, reports, currentReport, getReport, getReportData, currentReportData, getMyReports, myReports, currentSheet, currentSheetData, handleSetSheet, getSheetData, addSheet, updateSheet}}>
         {children}
     </ReportContext.Provider>
 }

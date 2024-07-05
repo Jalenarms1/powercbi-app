@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { CiSearch } from "react-icons/ci";
 
-const Dropdown = ({ options, label, onSelect }) => {
+const Dropdown = ({ options, label, onSelect, currentOptId=null }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [optionList, setOptionList] = useState(options);
@@ -70,7 +70,7 @@ const Dropdown = ({ options, label, onSelect }) => {
             <div 
               key={index} 
               onClick={() => handleOptionClick(option)} 
-              className="p-2 hover:bg-gray-100 cursor-pointer"
+              className={`p-2 hover:bg-gray-100 cursor-pointer ${currentOptId == option?.uid ? 'bg-gray-100' : ''}`}
             >
               {option.name}
             </div>
