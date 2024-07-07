@@ -70,7 +70,7 @@ const Dropdown = ({ options, label, onSelect, currentOptId=null }) => {
             <div 
               key={index} 
               onClick={() => handleOptionClick(option)} 
-              className={`p-2 hover:bg-gray-100 cursor-pointer ${currentOptId == option?.uid ? 'bg-gray-100' : ''}`}
+              className={`p-2 hover:bg-gray-100 cursor-pointer ${(currentOptId == option?.uid && currentOptId) ? 'bg-gray-100' : ''}`}
             >
               {option.name}
             </div>

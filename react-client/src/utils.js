@@ -111,3 +111,30 @@ export const getTomorrowDate = () => {
     today.setDate(today.getDate() + 1);
     return today.toISOString().split('T')[0]; // Format date to yyyy-mm-dd
   };
+
+
+export const getFilterColsFromStr = (colStr) => {
+    const filterObj = []
+    colStr.split("|").forEach(c => {
+        const split = c.split("=")
+        const obj = {}
+        obj.name = split[0]
+        obj.values = [...split[1].split(",")]
+        filterObj.push(obj)
+    })
+
+    return filterObj
+}
+
+export const getSortsFromStr = (sortStr) => {
+    const sortList = []
+    sortStr.split("|").forEach(c => {
+        const split = c.split("=")
+        const obj = {}
+        obj.name = split[0]
+        obj.sort = split[1]
+        sortList.push(obj)
+    })
+
+    return sortList
+}

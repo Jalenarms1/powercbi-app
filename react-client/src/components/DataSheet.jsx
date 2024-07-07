@@ -2,7 +2,7 @@ import React from 'react'
 import { DataTable } from './DataTable'
 import { VscLoading } from 'react-icons/vsc'
 
-export const DataSheet = ({currentSheet, currentSheetData, dataLoading, handleGetData, setSelectedValue }) => {
+export const DataSheet = ({currentSheet, viewData, currentSheetData, dataLoading, handleGetData, setSelectedValue, filters, sortList, setFilters, setSortList }) => {
 
 
 
@@ -12,7 +12,7 @@ export const DataSheet = ({currentSheet, currentSheetData, dataLoading, handleGe
         {currentSheetData && (
             <div style={{ height: '100vh' }}>
                 
-                <DataTable columns={currentSheet?.columnList.split(",")} data={currentSheetData} setSelectedValue={setSelectedValue} />
+                <DataTable viewData={viewData} columns={currentSheet?.columnList.split(",")} data={currentSheetData} setSelectedValue={setSelectedValue} filters={filters} sortList={sortList} setFilters={setFilters} setSortList={setSortList} />
                 
             </div>
             

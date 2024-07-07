@@ -7,13 +7,11 @@ import { formatDateIfDate } from '../utils';
 import VirtualList from './VirtualList';
 
 
-export const DataTable = ({columns, data, setSelectedValue}) => {
+export const DataTable = ({columns, data, setSelectedValue, sortList, setSortList, setFilters, filters, viewData}) => {
 
     const [colList, setColList] = useState(null)
     const [currData, setCurrData] = useState(null)
-    const [sortList, setSortList] = useState([])
     const [openColumnFilter, setOpenColumnFilter] = useState(false)
-    const [filters, setFilters] = useState([])
     const [scrollTop, setScrollTop] = useState(0)
 
     const [visibleData, setVisibleData] = useState(null)
@@ -105,77 +103,9 @@ export const DataTable = ({columns, data, setSelectedValue}) => {
         return cData
     }
 
-    const filterData = (initData) => {
-        let cData = initData
+   
 
-        filters.forEach(f => {
-            cData = [...cData].filter(d => {
-                console.log(f.name);
-                console.log(d[f.name]);
-                console.log(f.values);
-                return f.values.includes(d[f.name])
-            })
-        })
-
-        return cData
-    }
-
-    // useEffect(() => {
-    //     if(sortList?.length > 0) {
-    //         let cData = []
-    //         cData = sortData(data)
-
-    //         cData = filterData(cData)
-    //         setCurrData(cData)
-    //     } else {
-    //         if(filters.length == 0) {
-
-    //             setCurrData(data)
-    //         }
-    //     }
-    // }, [sortList])
-
-    useEffect(() => {
-        if(currData) {
-            let cData = data
-            if (filters.length > 0) {
-                filters.forEach(f => {
-                    cData = [...cData].filter(d => {
-                        return f.values.includes(d[f.name])
-                    })
-                })
     
-            } 
-
-            if(sortList.length > 0) {
-
-                sortList.forEach(s => {
-                    cData =  [...cData].sort((a, b) => {
-                        let comparison = 0;
-                        const valueA = a[s.name];
-                        const valueB = b[s.name];
-                  
-                        // Handle sorting based on data type
-                        if (typeof valueA === 'number' && typeof valueB === 'number') {
-                          comparison = valueA - valueB;
-                        } else if (typeof valueA === 'string' && typeof valueB === 'string') {
-                          comparison = valueA.localeCompare(valueB);
-                        } else if (valueA instanceof Date && valueB instanceof Date) {
-                          comparison = valueA.getTime() - valueB.getTime();
-                        } else {
-                          // Handle other data types or mixed types as needed
-                          comparison = String(valueA).localeCompare(String(valueB));
-                        }
-                  
-                        // Adjust comparison based on sort direction
-                        return s.sort === 'asc' ? comparison : -comparison;
-                    });
-                }) 
-            }
-            setCurrData(cData)
-
-        }
-    }, [filters, sortList])
 
     const handleScroll = (e) => {
         const newScrollTop = e.currentTarget.scrollTop
@@ -185,7 +115,7 @@ export const DataTable = ({columns, data, setSelectedValue}) => {
     console.log('filters', filters);
 
     const renderItem = (item, index) => (
-        <div className={`flex ${index % 2 == 0 ? 'bg-zinc-300' : 'bg-zinc-200'} min-w-[400px]`}>
+        <div className={`flex ${index % 2 == 0 ? 'bg-zinc-300' : 'bg-zinc-200'} text-black min-w-[400px]`}>
             {colList.map((c, i) => (
                 <p onClick={() => setSelectedValue(item[c])} className='w-[400px] p-3  truncate cursor-pointer hover:shadow-inner'>{(['true', 'false'].includes(`${item[c]}`) && !['true', 'false'].includes(item[c])) ?`${item[c]}` : formatDateIfDate(item[c])}</p>
             ))}
@@ -209,11 +139,10 @@ export const DataTable = ({columns, data, setSelectedValue}) => {
         </div>
     )
     
-
   return (
     <div onScroll={handleScroll} className=" w-full h-[95vh] overflow-auto  rounded-md shadow-sm shadow-zinc-300 relative">
         {openColumnFilter && <DataFilter clearColFilter={clearColFilter} filters={filters} data={data} openColumnFilter={openColumnFilter} toggleFilter={toggleFilter} setOpenColumnFilter={setOpenColumnFilter}  />}
-        {currData && <div className='bg-zinc-100 rounded-md flex flex-col w-fit relative '>
+        {(viewData && colList) && <div className='bg-zinc-100 rounded-md flex flex-col w-fit relative '>
             
             <div id="table-header" className='flex bg-slate-900 text-white sticky top-0'>
                 {colList.map((c, i) => (
@@ -223,23 +152,23 @@ export const DataTable = ({columns, data, setSelectedValue}) => {
                             {sortList?.find(s => s.name == c)?.sort == 'asc' && <FaLongArrowAltUp />}
                             {sortList?.find(s => s.name == c)?.sort == 'desc' &&<FaLongArrowAltDown />}
                         </div>
-                        <IoFilter onClick={openColumnFilter == c ? () => setOpenColumnFilter(null) : () => setOpenColumnFilter(c)} className={`cursor-pointer ${ filters?.filter(f => f.name == c).length > 0 ? 'text-green-500' : ''} scale-[.95]`} />
+                        <IoFilter onClick={openColumnFilter == c ? () => setOpenColumnFilter(null) : () => setOpenColumnFilter(c)} className={`cursor-pointer ${ filters?.filter(f => f.name == c).length > 0 ? 'text-green-500' : ''} active:scale-[.95]`} />
                         
                     </div>
                 ))}
 
             </div>
             
-            {/* <div className={`flex flex-col h-[${45 * currData.length}px]`}>
-                {visibleData.map((d, i) => (
-                    <div className={`flex ${i % 2 == 0 ? 'bg-zinc-300' : 'bg-zinc-200'} `}>
+            {/* <div className={`flex flex-col h-[${20 * currData.length}px]`}>
+                {viewData.map((d, i) => (
+                    <div className={`flex ${i % 2 == 0 ? 'bg-zinc-300' : 'bg-zinc-200'} min-w-[400px]`}>
                         {colList.map((c, i) => (
-                            <p onClick={() => setSelectedValue(d[c])} className='w-[300px] p-3  truncate cursor-pointer hover:shadow-inner'>{(['true', 'false'].includes(`${d[c]}`) && !['true', 'false'].includes(d[c])) ?`${d[c]}` : formatDateIfDate(d[c])}</p>
+                            <p onClick={() => setSelectedValue(d[c])} className='min-w-[400px] p-3  truncate cursor-pointer hover:shadow-inner'>{(['true', 'false'].includes(`${d[c]}`) && !['true', 'false'].includes(d[c])) ?`${d[c]}` : formatDateIfDate(d[c])}</p>
                         ))}
                     </div>
                 ))}
             </div> */}
-            <VirtualList renderCols={renderCols} items={currData} itemHeight={50} renderItem={renderItem} />
+            <VirtualList renderCols={renderCols} items={viewData} itemHeight={50} renderItem={renderItem} />
         </div>}
     </div>
   )

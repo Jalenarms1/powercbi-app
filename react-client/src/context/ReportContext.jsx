@@ -1,5 +1,5 @@
 import { useContext, createContext, useState, useEffect } from "react";
-import { get, post, put } from "../utils";
+import { get, getFilterColsFromStr, getSortsFromStr, post, put } from "../utils";
 import { useAuth } from "./AuthContext";
 
 
@@ -14,6 +14,9 @@ export const ReportContextProvider  = ({children}) => {
     const [currentSheet, setCurrentSheet] = useState(null)
     const [currentSheetData, setCurrentSheetData] = useState(null)
     const [dataHx, setDataHx] = useState({})
+    const [viewData, setViewData] = useState(null)
+    const [filters, setFilters] = useState([])
+    const [sortList, setSortList] = useState([])
 
     const {user} = useAuth()
 
@@ -76,7 +79,7 @@ export const ReportContextProvider  = ({children}) => {
         const {data} = await put(`/sheet/update?sheetId=${sheetId}`, fieldsToUpd)
         getReport(reportId)
         handleSetSheet(data)
-        setDataHx({...dataHx, [sheetId]: null})
+        // setDataHx({...dataHx, [sheetId]: null})
         // getSheetData(data)
     }
 
@@ -96,7 +99,70 @@ export const ReportContextProvider  = ({children}) => {
     }, [currentReport])
 
     useEffect(() => {
+        // if(currentSheetData) {
+        //     setViewData(currentSheetData)
+        // }
+    }, [currentSheetData])
+
+    useEffect(() => {
+        if(currentSheetData) {
+            console.log('filtering');
+            let cData = [...currentSheetData]
+            console.log(cData);
+            if (filters.length > 0) {
+                filters.forEach(f => {
+                    cData = [...cData].filter(d => {
+                        
+                        return f.values.map(v => `${v}`).includes(`${d[f.name]}`)
+                    })
+                })
+    
+            } 
+
+            console.log(cData);
+
+            if(sortList.length > 0) {
+
+                sortList.forEach(s => {
+                    cData =  [...cData].sort((a, b) => {
+                        let comparison = 0;
+                        const valueA = a[s.name];
+                        const valueB = b[s.name];
+                  
+                        // Handle sorting based on data type
+                        if (typeof valueA === 'number' && typeof valueB === 'number') {
+                          comparison = valueA - valueB;
+                        } else if (typeof valueA === 'string' && typeof valueB === 'string') {
+                          comparison = valueA.localeCompare(valueB);
+                        } else if (valueA instanceof Date && valueB instanceof Date) {
+                          comparison = valueA.getTime() - valueB.getTime();
+                        } else {
+                          // Handle other data types or mixed types as needed
+                          comparison = String(valueA).localeCompare(String(valueB));
+                        }
+                  
+                        // Adjust comparison based on sort direction
+                        return s.sort === 'asc' ? comparison : -comparison;
+                    });
+                }) 
+            }
+            console.log('filteredData', cData);
+            setViewData(cData)
+
+        }
+    }, [filters, sortList, currentSheetData])
+
+    useEffect(() => {
+        setFilters([])
+        setSortList([])
         if(currentSheet) {
+            if(currentSheet.filters) {
+                setFilters(getFilterColsFromStr(currentSheet.filters))
+            }
+
+            if(currentSheet.orderBy) {
+                setSortList(getSortsFromStr(currentSheet.orderBy))
+            }
             if (dataHx[currentSheet.uid]) {
                 setCurrentSheetData(dataHx[currentSheet.uid])
             } else {
@@ -106,7 +172,9 @@ export const ReportContextProvider  = ({children}) => {
         }
     }, [currentSheet])
 
-    return <ReportContext.Provider value={{submitReport, getReports, reports, currentReport, getReport, getReportData, currentReportData, getMyReports, myReports, currentSheet, currentSheetData, handleSetSheet, getSheetData, addSheet, updateSheet}}>
+    console.log('dataHx', dataHx);
+
+    return <ReportContext.Provider value={{submitReport, getReports, reports, currentReport, getReport, getReportData, currentReportData, getMyReports, myReports, currentSheet, currentSheetData, handleSetSheet, getSheetData, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData}}>
         {children}
     </ReportContext.Provider>
 }

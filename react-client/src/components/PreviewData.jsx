@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { SheetSettings } from './SheetSettings';
 
 import { FaCheckDouble } from "react-icons/fa6";
+import { getFilterColsFromStr, getSortsFromStr } from '../utils';
 
 
 
@@ -18,10 +19,13 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
 
     const [dataLoading, setDataLoading] = useState(false)
     const [selectedValue, setSelectedValue] = useState(null)
-    const {getSheetData, currentSheetData, currentSheet, handleSetSheet, addSheet, updateSheet} = useReportContext()
+    const {getSheetData, currentSheetData, currentSheet, handleSetSheet, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData} = useReportContext()
+    // const [filters, setFilters] = useState([])
+    // const [sortList, setSortList] = useState([])
     const [showSheetSettings, setShowSheetSettings] = useState(false)
     const [editSheetTitle, setEditSheetTitle] = useState(false)
     const [newTitle, setNewTitle] = useState(currentSheet?.sheetTitle ?? null)
+    const [saveFiltersBtn, setSaveFiltersBtn] = useState(false)
     const {user} = useAuth()
     
 
@@ -37,6 +41,12 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
         }
     }, [currentSheetData])
 
+    useEffect(() => {
+        if(filters, sortList) {
+            setSaveFiltersBtn(true)
+        }
+    }, [filters, sortList])
+
     
     useEffect(() => {
         if(currentReport) {
@@ -49,6 +59,15 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
         if(currentSheet) {
             // handleGetData(currentSheet)
             setNewTitle(null)
+            setSaveFiltersBtn(false)
+
+            // if(currentSheet.filters) {
+            //     setFilters(getFilterColsFromStr(currentSheet.filters))
+            // }
+
+            // if(currentSheet.orderBy) {
+            //     setSortList(getSortsFromStr(currentSheet.orderBy))
+            // }
         }
     }, [currentSheet])
     
@@ -61,6 +80,53 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
                 name: s.sheetTitle
             }
         })
+    }
+    
+
+    const handleSaveFilters = () => {
+
+        let filtersArr = []
+        filters.forEach(f => {
+            if(f.values.join(",").trim() != '') {
+                let colStr = `${f.name}=${f.values.join(",")}`
+    
+                filtersArr.push(colStr)
+
+            }
+
+        })
+
+        let sortListArr = []
+        sortList.forEach(s => {
+            
+            let sortStr = `${s.name}=${s.sort}`
+
+            sortListArr.push(sortStr)
+        })
+
+        const updObj = {}
+
+        if(filters.length > 0) {
+            updObj.filters = filtersArr.join("|")
+        } else {
+            updObj.filters = ''
+        }
+
+        if(sortList.length > 0) {
+            updObj.orderBy = sortListArr.join("|")
+        } else {
+            updObj.orderBy = ''
+        }
+
+        if(Object.keys(updObj).length > 0) {
+            updateSheet(updObj, currentSheet.uid, currentReport.uid)
+
+            setSaveFiltersBtn(false)
+
+        } 
+
+        getSheetData(currentSheet)
+
     }
 
     const handleUpdateTitle = () => {
@@ -94,10 +160,11 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
                 <p>Sheet:</p>
                 <Dropdown currentOptId={currentSheet?.uid} label={currentSheet?.sheetTitle ?? currentReport?.sheets[0].sheetTitle} options={sheetOpts(currentReport.sheets)} onSelect={(option) => handleSetSheet(option)} />
                 <button onClick={() => addSheet(currentSheet)} className='px-3 py-1 bg-blue-500 text-white rounded-md active:scale-[.95] active:shadow-sm active:shadow-zinc-700'>+ Add sheet</button>
+                {!showSheetSettings && <button disabled={!saveFiltersBtn} onClick={handleSaveFilters} className={`px-3 py-1  ${saveFiltersBtn ? 'bg-green-500 text-white' : 'bg-zinc-400 text-zinc-300'}  rounded-md active:scale-[.95] active:shadow-sm active:shadow-zinc-700`}>Save filters</button>}
             </div>
 
         </div>}
-        {!showSheetSettings ? <DataSheet setSelectedValue={setSelectedValue} currentSheet={currentSheet} currentSheetData={currentSheetData} handleGetData={handleGetData} dataLoading={dataLoading}  /> : <SheetSettings updateSheet={updateSheet} currentSheet={currentSheet} currentReport={currentReport}  />}
+        {!showSheetSettings ? <DataSheet viewData={viewData} filters={filters} sortList={sortList} setFilters={setFilters} setSortList={setSortList} setSelectedValue={setSelectedValue} currentSheet={currentSheet} currentSheetData={currentSheetData} handleGetData={handleGetData} dataLoading={dataLoading}  /> : <SheetSettings updateSheet={updateSheet} currentSheet={currentSheet} currentReport={currentReport}  />}
     </div>
   )
 }
