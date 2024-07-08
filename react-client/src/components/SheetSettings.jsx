@@ -109,6 +109,18 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport}) => {
             dataQuery = `exec ${dataSource.name} ${parameters.map(p => `'${p}'`).join(", ")};`
         }
 
+        const updObj = {
+            parameters: parameters.join(','), 
+             
+            dataQuery, 
+            columnList: dataSourceColumns.filter(f => f.include).map(c => c.name).join(",")
+        }
+
+        if (dataSource.name != currentSheet.dataSource.split(" ")[0] && dataSource.name != currentSheet.dataSource) {
+            updObj.dataSource = dataSource.name
+            updObj.dataSourceType = dataSource.type_desc
+        }
+
         updateSheet({dataSource: dataSource.name, parameters: parameters.join(','), dataSourceType:dataSource.type_desc, dataQuery, columnList: dataSourceColumns.filter(f => f.include).map(c => c.name).join(",")}, currentSheet.uid, currentReport.uid)
     }
 

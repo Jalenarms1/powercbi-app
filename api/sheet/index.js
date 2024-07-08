@@ -43,6 +43,10 @@ router.put('/sheet/update', async (req, res) => {
         updArr.push(`${k} = '${replaceApos(req.body[k])}'`)
     })
 
+    if (Object.keys(req.body).includes('dataSource')) {
+        updArr.push('filters = NULL, orderBy = NULL')
+    }
+
     
     const query = `update ${SHEET_TABLE} set ${updArr.join(", ")} where uid = '${sheetId}'`
 

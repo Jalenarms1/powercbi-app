@@ -140,7 +140,7 @@ export const DataTable = ({columns, data, setSelectedValue, sortList, setSortLis
     )
     
   return (
-    <div onScroll={handleScroll} className=" w-full h-[95vh] overflow-auto  rounded-md shadow-sm shadow-zinc-300 relative">
+    <div onScroll={handleScroll} className=" w-full h-[80vh] overflow-auto  rounded-md shadow-sm shadow-zinc-300 relative">
         {openColumnFilter && <DataFilter clearColFilter={clearColFilter} filters={filters} data={data} openColumnFilter={openColumnFilter} toggleFilter={toggleFilter} setOpenColumnFilter={setOpenColumnFilter}  />}
         {(viewData && colList) && <div className='bg-zinc-100 rounded-md flex flex-col w-fit relative '>
             
@@ -170,6 +170,7 @@ export const DataTable = ({columns, data, setSelectedValue, sortList, setSortLis
             </div> */}
             <VirtualList renderCols={renderCols} items={viewData} itemHeight={50} renderItem={renderItem} />
         </div>}
+        
     </div>
   )
 }

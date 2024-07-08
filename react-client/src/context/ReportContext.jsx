@@ -115,8 +115,10 @@ export const ReportContextProvider  = ({children}) => {
             if (filters.length > 0) {
                 filters.forEach(f => {
                     cData = [...cData].filter(d => {
+                        let val = `${d[f.name]}`.trim() != 'null' ? `${d[f.name]}` : '(blank)'
                         
-                        return f.values.map(v => `${v}`).includes(`${d[f.name]}`)
+                        
+                        return f.values.map(v => `${v}`).includes(val)
                     })
                 })
     

@@ -87,12 +87,11 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
 
         let filtersArr = []
         filters.forEach(f => {
-            if(f.values.join(",").trim() != '') {
-                let colStr = `${f.name}=${f.values.join(",")}`
-    
-                filtersArr.push(colStr)
+            let colStr = `${f.name}=${f.values.join(",")}`
 
-            }
+            filtersArr.push(colStr)
+
+            
 
         })
 

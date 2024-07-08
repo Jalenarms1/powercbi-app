@@ -28,10 +28,10 @@ async function execQuery(query) {
   });
 }
 
-const CONTAINER_TABLE = 'Container'
-const REPORT_TABLE = 'Report'
-const JOB_TABLE = 'ReportJob'
-const SHEET_TABLE = 'DataSheet'
+const CONTAINER_TABLE = 'PowerCBIContainer'
+const REPORT_TABLE = 'PowerCBIReport'
+const JOB_TABLE = 'PowerCBIReportJob'
+const SHEET_TABLE = 'PowerCBIDataSheet'
 
 module.exports = {
   getConnection,

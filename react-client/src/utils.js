@@ -32,7 +32,9 @@ export function formatDateIfDate(value) {
     }
     
     // If the value is not a Date, return it as is
-    return value;
+    if (`${value}`.trim() == 'null') return '(blank)'
+    
+    return `${value}`;
   }
   
   // Helper function to format Date object to mm/dd/yyyy
@@ -119,7 +121,7 @@ export const getFilterColsFromStr = (colStr) => {
         const split = c.split("=")
         const obj = {}
         obj.name = split[0]
-        obj.values = [...split[1].split(",")]
+        obj.values = [...split[1].split(",").map(v => `${v}` == '' ? '(blank)' : v)]
         filterObj.push(obj)
     })
 

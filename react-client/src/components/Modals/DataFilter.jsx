@@ -52,9 +52,9 @@ export const DataFilter = ({openColumnFilter, clearColFilter, setOpenColumnFilte
                 </div>
                 {optionsList && <div className="flex flex-col">
                     {optionsList.map((cv, indx) => (
-                        <div onClick={() => toggleFilter(openColumnFilter, cv)} key={indx} className='flex items-center justify-between cursor-pointer p-2 hover:bg-zinc-100'>
-                            <p  onClick={() => toggleFilter(openColumnFilter, cv)} className='text-black'>{cv}</p>
-                            <button className={` shadow-sm shadow-zinc-300 ${filters.find(f => f.name == openColumnFilter)?.values.map(v => `${v}`).includes(`${cv}`) ? 'bg-blue-500' : 'bg-white'} `}>
+                        <div onClick={() => toggleFilter(openColumnFilter, `${cv}` == 'null' ? '(blank)' : cv)} key={indx} className='flex items-center justify-between cursor-pointer p-2 hover:bg-zinc-100'>
+                            <p  onClick={() => toggleFilter(openColumnFilter, `${cv}` == 'null' ? '(blank)' : cv)} className='text-black'>{`${cv}` == 'null' ? '(blank)' : cv}</p>
+                            <button className={` shadow-sm shadow-zinc-300 ${filters.find(f => f.name == openColumnFilter)?.values.map(v => `${v}`).includes(`${cv}` == 'null' ? '(blank)' : cv) ? 'bg-blue-500' : 'bg-white'} `}>
                                 <IoCheckmark className='text-white font-semibold' />
                             </button>
                         </div>

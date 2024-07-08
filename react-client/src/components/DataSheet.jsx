@@ -10,7 +10,7 @@ export const DataSheet = ({currentSheet, viewData, currentSheetData, dataLoading
   return (
     <>
         {currentSheetData && (
-            <div style={{ height: '100vh' }}>
+            <div style={{ height: '80vh' }}>
                 
                 <DataTable viewData={viewData} columns={currentSheet?.columnList.split(",")} data={currentSheetData} setSelectedValue={setSelectedValue} filters={filters} sortList={sortList} setFilters={setFilters} setSortList={setSortList} />
                 
@@ -22,6 +22,9 @@ export const DataSheet = ({currentSheet, viewData, currentSheetData, dataLoading
 
             {(dataLoading) && <VscLoading className='animate-spin text-6xl' />}
 
+        </div>}
+        {currentSheetData && <div className='flex justify-end p-2'>
+            <p className='font-semibold text-lg'>Count: <span className='font-normal'>{viewData?.length}</span></p>
         </div>}
     
     </>
