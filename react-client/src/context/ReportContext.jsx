@@ -78,8 +78,11 @@ export const ReportContextProvider  = ({children}) => {
     const updateSheet = async (fieldsToUpd, sheetId, reportId) => {
         const {data} = await put(`/sheet/update?sheetId=${sheetId}`, fieldsToUpd)
         getReport(reportId)
+        if(Object.keys(fieldsToUpd).includes('dataSource')) {
+            setDataHx({...dataHx, [sheetId]: null})
+
+        }
         handleSetSheet(data)
-        // setDataHx({...dataHx, [sheetId]: null})
         // getSheetData(data)
     }
 

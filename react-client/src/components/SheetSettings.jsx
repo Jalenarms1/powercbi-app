@@ -51,6 +51,12 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport}) => {
     }, [])
 
     useEffect(() => {
+        if (parameters) {
+            setDataSourceColumns(null)
+        }
+    }, [parameters])
+
+    useEffect(() => {
         if(dataSource) {
            
             if(dataSource.name == currentSheet.dataSource.split(" ")[0] || dataSource.name == currentSheet.dataSource) {
@@ -127,20 +133,16 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport}) => {
                     <button className='border rounded-md border-zinc-800 active:scale-[.95] p-1 shadow-sm shadow-zinc-400' onClick={() => setParameters([...parameters, ''])}>+ Add parameter</button>
                 </div>}
             </div>
-            {dataSourceColumns ? <div className="flex flex-col w-1/3 max-w-[25vw] gap-2">
+            {<div className="flex flex-col w-1/3 max-w-[25vw] gap-2">
                 <label htmlFor="upd-title" className='font-semibold'>Columns:</label>
-                <ColumnList label={'Select columns to show'} options={dataSourceColumns} onSelect={(opt) => setDataSourceColumns(dataSourceColumns.map(c => c.name == opt ? {...c, include: !c.include} : c))} />
-            </div> : 
-            (
-                <div className="flex flex-col gap-2">
-                    <label htmlFor="upd-title" className='font-semibold'>Columns:</label>
-
-                    <button onClick={getColumns} className='bg-blue-500 rounded-md text-white px-2 py-1'>Confirm data source</button>
-                </div>
-            )}
+                {dataSourceColumns && <ColumnList label={'Select columns to show'} options={dataSourceColumns} onSelect={(opt) => setDataSourceColumns(dataSourceColumns.map(c => c.name == opt ? {...c, include: !c.include} : c))} />}
+                <button onClick={getColumns} className='bg-blue-500 rounded-md text-white px-2 py-1'>Confirm data source</button>
+            </div>}
+            
+            
 
         </div>
-        <button  disabled={!dataSourceColumns} onClick={handleSave} className={` ${dataSourceColumns ? 'bg-blue-500 hover:bg-blue-400 text-white active:scale-[.95]' : ' bg-zinc-300 text-zinc-200'}   shadow-md shadow-zinc-200 w-fit px-4 py-2 rounded-md`}>Save</button>
+        <button  disabled={!dataSourceColumns} onClick={handleSave} className={` ${dataSourceColumns ? 'bg-white border hover:bg-blue-500 text-blue-500 hover:text-white active:scale-[.95]' : ' bg-zinc-300 text-zinc-200'}   shadow-md shadow-zinc-200 w-fit px-4 py-2 rounded-md`}>Save</button>
     </div>
   )
 }

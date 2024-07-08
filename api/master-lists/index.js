@@ -44,26 +44,19 @@ router.get('/master-list/data-source-columns', async (req, res) => {
 
     } else {
         try {
-            const query = `
-            SELECT 
-                name AS ColumnName,
-                system_type_name AS DataType,
-                is_nullable AS IsNullable
-            FROM 
-                sys.dm_exec_describe_first_result_set('${replaceApos(req.query.exec)}', NULL, 0);
-            `
+            const query = `${req.query.exec}`
+            // const query = `${req.query.exec}`
             console.log('query', query);
     
             const resp = await execQuery(query)
 
             console.log('resp', resp);
 
-            const columns = resp.map(r => {
-                const {ColumnName, DataType} = r
+            const columns = Object.keys(resp[0]).map(r => {
+                
     
                 return {
-                    name: ColumnName, 
-                    dataType: DataType,
+                    name: r, 
                     include: true
                 }
             })
