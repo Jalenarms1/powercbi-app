@@ -2,7 +2,7 @@ import React from 'react'
 import { DataTable } from './DataTable'
 import { VscLoading } from 'react-icons/vsc'
 
-export const DataSheet = ({currentSheet, viewData, currentSheetData, dataLoading, handleGetData, setSelectedValue, filters, sortList, setFilters, setSortList }) => {
+export const DataSheet = ({currentSheet, dataErr, viewData, currentSheetData, dataLoading, handleGetData, setSelectedValue, filters, sortList, setFilters, setSortList }) => {
 
 
 
@@ -21,6 +21,8 @@ export const DataSheet = ({currentSheet, viewData, currentSheetData, dataLoading
             {(!dataLoading) && <button onClick={() => handleGetData(currentSheet)} className='bg-zinc-200 shadow-sm shadow-zinc-400 p-1 active:scale-[.95]'>Get Data</button>}
 
             {(dataLoading) && <VscLoading className='animate-spin text-6xl' />}
+
+            {dataErr && <p className='text-red-500 text-xl'>There was an error retrieving the data. Please check your configuration.</p>}
 
         </div>}
         {currentSheetData && <div className='flex justify-end p-2'>

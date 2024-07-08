@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { CiSearch } from 'react-icons/ci';
 import { IoCheckmark } from "react-icons/io5";
+import { MdCheckBoxOutlineBlank, MdCheckBox  } from "react-icons/md";
 
 
-export const ColumnList = ({ options, label, onSelect }) => {
-    const [isOpen, setIsOpen] = useState(false);
+
+export const ColumnList = ({ options, label, onSelect, toggleAll }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [optionList, setOptionList] = useState(options);
   const dropdownRef = useRef(null);
@@ -77,14 +79,21 @@ export const ColumnList = ({ options, label, onSelect }) => {
                 <input onChange={handleSearchChange} type="text" className='w-4/5' />
                 <CiSearch className='text-xl w-1/5' />
               </div>
+              <div onClick={toggleAll} className="p-2 hover:bg-gray-100 cursor-pointer flex items-center justify-between">
+                <p onClick={toggleAll} className=''>Check all</p>
+                {optionList.filter(o => o.include).length == optionList.length ? <MdCheckBox onClick={toggleAll} className='text-2xl text-blue-500'/> : <MdCheckBoxOutlineBlank onClick={toggleAll} className='text-2xl text-blue-500' />}
+                
+              </div>
+              
               {optionList && optionList.map((option, index) => (
                 <div 
                   key={index} 
                   onClick={() => handleOptionClick(option.name)} 
-                  className="p-2 relative hover:bg-gray-100 cursor-pointer flex justify-between"
+                  className="p-2 relative hover:bg-gray-100 cursor-pointer flex justify-between items-center"
                 >
                   <p title={option.name} className='truncate'>{option.name}</p>
-                  <p onClick={() => handleOptionClick(option.name)} className={` ${option.include ? 'bg-blue-400' : 'bg-white'} absolute right-5 top-3 text-center`}><IoCheckmark className='text-white font-semibold' /></p>
+                  {option.include ? <MdCheckBox onClick={() => handleOptionClick(option.name)} className='text-2xl text-blue-500'/> : <MdCheckBoxOutlineBlank onClick={() => handleOptionClick(option.name)} className='text-2xl text-blue-500' />}
+                  {/* <p onClick={() => handleOptionClick(option.name)} className={` ${option.include ? 'bg-blue-400' : 'bg-white'} absolute right-5 top-3 text-center`}><IoCheckmark className='text-white font-semibold' /></p> */}
                 </div>
               ))}
               

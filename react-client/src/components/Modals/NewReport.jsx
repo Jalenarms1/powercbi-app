@@ -105,6 +105,24 @@ export const NewReport = ({closeModal, containerId}) => {
         })
     }
 
+    const toggleAllCols = () => {
+        if (dataSourceColumns.filter(c => c.include).length == dataSourceColumns.length) {
+            setDataSourceColumns(dataSourceColumns.map(c => {
+                return {
+                    ...c,
+                    include: false
+                }
+            }))
+        } else {
+            setDataSourceColumns(dataSourceColumns.map(c => {
+                return {
+                    ...c,
+                    include: true
+                }
+            }))
+        }
+    }
+
   return (
     <div className="absolute transition-transform overflow-y-scroll duration-200 inset-0 w-full h-[70vh] bg-zinc-300 p-6 border border-zinc-400 rounded-md z-[1] ">
         <div className="flex flex-col gap-4 w-full">
@@ -122,7 +140,7 @@ export const NewReport = ({closeModal, containerId}) => {
                     <label htmlFor="report-title">Title</label>
                     <input maxLength={200} value={reportTitle} onChange={(e) => setReportTitle(e.target.value)} type="text" id='report-title' placeholder='Title...' className='p-1 rounded-md' />
                 </div>
-                <div className="flex flex-col gap-4 w-72">
+                <div className="flex flex-col gap-4 w-72 max-w-96">
                     <div className="flex flex-col">
                         <p className="">Data Source</p>
                         <Dropdown onSelect={setCurrentDataSource} label={'Select a data source'} options={dataSources ?? null}  />
@@ -150,7 +168,7 @@ export const NewReport = ({closeModal, containerId}) => {
                         ))}
 
                     </div> */}
-                    <ColumnList label={'Choose column list'} options={dataSourceColumns} onSelect={handleColumnToggle} />
+                    <ColumnList toggleAll={toggleAllCols} label={'Choose column list'} options={dataSourceColumns} onSelect={handleColumnToggle} />
                 </div>}
             </div>
         </div>

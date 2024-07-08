@@ -2,14 +2,18 @@ import React, { useEffect, useState } from 'react'
 import { get } from '../utils'
 import Dropdown from './Dropdown'
 import { ColumnList } from './ColumnList'
+import { useReportContext } from '../context/ReportContext'
 
-export const SheetSettings = ({currentSheet, updateSheet, currentReport}) => {
+export const SheetSettings = ({currentSheet, updateSheet, currentReport, redirectToDataView}) => {
 
     const [fieldsToUpd, setFieldsToUpd]= useState(null)
     const [dataSourceList, setDataScourceList] = useState(null)
     const [dataSource, setDataSource] = useState(null)
     const [dataSourceColumns, setDataSourceColumns] = useState(null)
     const [parameters, setParameters] = useState([])
+    const [getColErr, setGetColErr] = useState(false)
+
+    const {filters, setFilters, sortList, setSortList} = useReportContext()
 
     useEffect(() => {
         if(currentSheet) {
@@ -19,6 +23,7 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport}) => {
     }, [currentSheet])
 
     const getColumns = async () => {
+        setGetColErr(false)
         let queryStr = `?name=${dataSource.name}&type=${dataSource.type_desc}`
 
         if(dataSource.type_desc == 'SQL_STORED_PROCEDURE') { 
@@ -26,18 +31,24 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport}) => {
         }
         const {data} = await get(`/master-list/data-source-columns${queryStr}`)
 
-        let colData = data
-        if(dataSource.name == currentSheet.dataSource.split(" ")[0] || dataSource.name == currentSheet.dataSource) {  
-            console.log('currentSource', dataSource);                  
-            colData = colData.map(c => {
-                return {
-                    ...c,
-                    include: currentSheet.columnList.split(",").includes(c.name)
-                }
-            })
+        if (data.error) {
+            setGetColErr(true)
+        } else {
+            let colData = data
+            if(dataSource.name == currentSheet.dataSource.split(" ")[0] || dataSource.name == currentSheet.dataSource) {  
+                console.log('currentSource', dataSource);                  
+                colData = colData.map(c => {
+                    return {
+                        ...c,
+                        include: currentSheet.columnList.split(",").includes(c.name)
+                    }
+                })
+            }
+            console.log('setData', colData);
+            setDataSourceColumns(colData)
+
         }
-        console.log('setData', colData);
-        setDataSourceColumns(colData)
+
     }
 
     useEffect(() => {
@@ -103,7 +114,7 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport}) => {
         let dataQuery;
 
         if (dataSource.type_desc == 'VIEW') {
-            dataQuery = `select ${dataSourceColumns.filter(f => f.include).map(c => c.name).join(",")} from ${dataSource.name}`
+            dataQuery = `select ${dataSourceColumns.filter(f => f.include).map(c => `[${c.name}]`).join(",")} from ${dataSource.name}`
         } else {
             
             dataQuery = `exec ${dataSource.name} ${parameters.map(p => `'${p}'`).join(", ")};`
@@ -116,12 +127,35 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport}) => {
             columnList: dataSourceColumns.filter(f => f.include).map(c => c.name).join(",")
         }
 
+        
+        // dataSourceColumns.filter(f => f.include).map(c => c.name)
+
         if (dataSource.name != currentSheet.dataSource.split(" ")[0] && dataSource.name != currentSheet.dataSource) {
             updObj.dataSource = dataSource.name
             updObj.dataSourceType = dataSource.type_desc
         }
 
-        updateSheet({dataSource: dataSource.name, parameters: parameters.join(','), dataSourceType:dataSource.type_desc, dataQuery, columnList: dataSourceColumns.filter(f => f.include).map(c => c.name).join(",")}, currentSheet.uid, currentReport.uid)
+        updateSheet(updObj, currentSheet.uid, currentReport.uid)
+
+        redirectToDataView()
+    }
+
+    const toggleAllCols = () => {
+        if (dataSourceColumns.filter(c => c.include).length == dataSourceColumns.length) {
+            setDataSourceColumns(dataSourceColumns.map(c => {
+                return {
+                    ...c,
+                    include: false
+                }
+            }))
+        } else {
+            setDataSourceColumns(dataSourceColumns.map(c => {
+                return {
+                    ...c,
+                    include: true
+                }
+            }))
+        }
     }
 
   return (
@@ -130,6 +164,8 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport}) => {
             <div className="flex flex-col w-1/3 max-w-[25vw] gap-2">
                 <label htmlFor="upd-title" className='font-semibold'>Data source: <span className='font-normal ml-2'>{currentSheet.dataSource}</span></label>
                 <Dropdown label={'Select a data source'} options={dataSourceList} onSelect={(opt) => setDataSource(opt)} />
+                <button disabled={dataSourceColumns} onClick={getColumns} className={` ${dataSourceColumns ? 'bg-zinc-400 text-zinc-300' : 'bg-blue-500 text-white'} rounded-md  px-2 py-1 w-fit active:scale-[.95]`}>Confirm data source</button>
+                {getColErr && <p className='text-xs text-red-500'>Error getting columns. Check required paramters.</p>}
                 {(dataSource && dataSource.type_desc == 'SQL_STORED_PROCEDURE') && <div className="flex flex-col items-start gap-2">
                     <div className="flex flex-col gap-4">
                         <p>{dataSource.type_desc != 'VIEW' ? `exec ${dataSource.name} ${parameters.join(", ")}` : dataSource.name}</p>
@@ -147,8 +183,8 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport}) => {
             </div>
             {<div className="flex flex-col w-1/3 max-w-[25vw] gap-2">
                 <label htmlFor="upd-title" className='font-semibold'>Columns:</label>
-                {dataSourceColumns && <ColumnList label={'Select columns to show'} options={dataSourceColumns} onSelect={(opt) => setDataSourceColumns(dataSourceColumns.map(c => c.name == opt ? {...c, include: !c.include} : c))} />}
-                <button onClick={getColumns} className='bg-blue-500 rounded-md text-white px-2 py-1'>Confirm data source</button>
+                {dataSourceColumns && <ColumnList toggleAll={toggleAllCols} label={'Select columns to show'} options={dataSourceColumns} onSelect={(opt) => setDataSourceColumns(dataSourceColumns.map(c => c.name == opt ? {...c, include: !c.include} : c))} />}
+                
             </div>}
             
             

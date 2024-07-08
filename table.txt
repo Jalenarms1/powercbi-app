@@ -7,7 +7,8 @@ CREATE TABLE Container (
     createdAt DATETIME default getdate()
 );
 
-CREATE TABLE Report (
+drop table PowerCBIReport
+CREATE TABLE PowerCBIReport (
     uid UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     containerId UNIQUEIDENTIFIER NOT NULL,
     title NVARCHAR(250) NOT NULL,
@@ -15,18 +16,20 @@ CREATE TABLE Report (
     createdAt DATETIME DEFAULT GETDATE()
 );
 
-CREATE TABLE DataSheet (
+drop table PowerCBIDataSheet
+
+CREATE TABLE PowerCBIDataSheet (
     uid UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     reportId UNIQUEIDENTIFIER NOT NULL,
     title nvarchar(250) not null,
-    dataSource nvarchar(max) not null
-    parameters nvarchar(max),
-    dataSourceType nvarchar(100) not null
-    dataQuery nvarchar(max) not null
-    columnList nvarchar(max) not null
-    filters nvarchar(max)
-    orderBy nvarchar(max)
-    createdBy nvarchar(250) not null
+    dataSource nvarchar(max) not null,
+	parameters nvarchar(max) null,
+    dataSourceType nvarchar(100) not null,
+    dataQuery nvarchar(max) not null,
+    columnList nvarchar(max) not null,
+    filters nvarchar(max),
+    orderBy nvarchar(max),
+    createdBy nvarchar(250) not null,
     createdAt datetime default getdate()
 
 

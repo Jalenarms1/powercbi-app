@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { CiSearch } from 'react-icons/ci'
 import { IoCheckmark } from 'react-icons/io5'
+import { formatDateIfDate, sortArr } from '../../utils'
 
 export const DataFilter = ({openColumnFilter, clearColFilter, setOpenColumnFilter, data, toggleFilter, filters}) => {
 
@@ -51,10 +52,10 @@ export const DataFilter = ({openColumnFilter, clearColFilter, setOpenColumnFilte
                     <button onClick={() => clearColFilter(openColumnFilter)} className="p-1 px-2 bg-zinc-200 shadow-sm shadow-zinc-200 active:scale-[.95]">Clear</button>
                 </div>
                 {optionsList && <div className="flex flex-col">
-                    {optionsList.map((cv, indx) => (
-                        <div onClick={() => toggleFilter(openColumnFilter, `${cv}` == 'null' ? '(blank)' : cv)} key={indx} className='flex items-center justify-between cursor-pointer p-2 hover:bg-zinc-100'>
-                            <p  onClick={() => toggleFilter(openColumnFilter, `${cv}` == 'null' ? '(blank)' : cv)} className='text-black'>{`${cv}` == 'null' ? '(blank)' : cv}</p>
-                            <button className={` shadow-sm shadow-zinc-300 ${filters.find(f => f.name == openColumnFilter)?.values.map(v => `${v}`).includes(`${cv}` == 'null' ? '(blank)' : cv) ? 'bg-blue-500' : 'bg-white'} `}>
+                    {sortArr(optionsList, 'asc').map((cv, indx) => (
+                        <div onClick={() => toggleFilter(openColumnFilter, `${cv}` == 'null' ? '(blank)' : `${cv}`)} key={indx} className='flex items-center justify-between cursor-pointer p-2 hover:bg-zinc-100'>
+                            <p  onClick={() => toggleFilter(openColumnFilter, `${cv}` == 'null' ? '(blank)' : `${cv}`)} className='text-black'>{`${cv}` == 'null' ? '(blank)' : formatDateIfDate(cv)}</p>
+                            <button className={` shadow-sm shadow-zinc-300 ${filters.find(f => f.name == openColumnFilter)?.values.map(v => `${v}`).includes(`${cv}` == 'null' ? '(blank)' : `${cv}`) ? 'bg-blue-500' : 'bg-white'} `}>
                                 <IoCheckmark className='text-white font-semibold' />
                             </button>
                         </div>

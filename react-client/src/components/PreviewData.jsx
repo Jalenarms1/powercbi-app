@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { SheetSettings } from './SheetSettings';
 
 import { FaCheckDouble } from "react-icons/fa6";
-import { getFilterColsFromStr, getSortsFromStr } from '../utils';
+import { getFilterColsFromStr, getFiltersStr, getSortListStr, getSortsFromStr } from '../utils';
 
 
 
@@ -19,7 +19,7 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
 
     const [dataLoading, setDataLoading] = useState(false)
     const [selectedValue, setSelectedValue] = useState(null)
-    const {getSheetData, currentSheetData, currentSheet, handleSetSheet, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData} = useReportContext()
+    const {getSheetData, currentSheetData, currentSheet, handleSetSheet, dataErr, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData} = useReportContext()
     // const [filters, setFilters] = useState([])
     // const [sortList, setSortList] = useState([])
     const [showSheetSettings, setShowSheetSettings] = useState(false)
@@ -85,34 +85,36 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
 
     const handleSaveFilters = () => {
 
-        let filtersArr = []
-        filters.forEach(f => {
-            let colStr = `${f.name}=${f.values.join(",")}`
+        // let filtersArr = []
+        // filters.forEach(f => {
+        //     let colStr = `${f.name}=${f.values.join(",")}`
 
-            filtersArr.push(colStr)
+        //     filtersArr.push(colStr)
 
             
 
-        })
+        // })
 
-        let sortListArr = []
-        sortList.forEach(s => {
+        // let sortListArr = []
+        // sortList.forEach(s => {
             
-            let sortStr = `${s.name}=${s.sort}`
+        //     let sortStr = `${s.name}=${s.sort}`
 
-            sortListArr.push(sortStr)
-        })
+        //     sortListArr.push(sortStr)
+        // })
 
         const updObj = {}
 
         if(filters.length > 0) {
-            updObj.filters = filtersArr.join("|")
+            // updObj.filters = filtersArr.join("|")
+            updObj.filters = getFiltersStr(filters)
         } else {
             updObj.filters = ''
         }
 
         if(sortList.length > 0) {
-            updObj.orderBy = sortListArr.join("|")
+            // updObj.orderBy = sortListArr.join("|")
+            updObj.orderBy = getSortListStr(sortList)
         } else {
             updObj.orderBy = ''
         }
@@ -133,8 +135,7 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
         setNewTitle(null)
     }
 
-    console.log('currentSheet', currentSheet);
-    console.log('currentSheetData', currentSheetData);
+    
 
   return (
     <div className='  rounded-md flex flex-col flex-1 gap-4 p-2  overflow-x-hidden'>
@@ -163,7 +164,7 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
             </div>
 
         </div>}
-        {!showSheetSettings ? <DataSheet viewData={viewData} filters={filters} sortList={sortList} setFilters={setFilters} setSortList={setSortList} setSelectedValue={setSelectedValue} currentSheet={currentSheet} currentSheetData={currentSheetData} handleGetData={handleGetData} dataLoading={dataLoading}  /> : <SheetSettings updateSheet={updateSheet} currentSheet={currentSheet} currentReport={currentReport}  />}
+        {!showSheetSettings ? <DataSheet dataErr={dataErr} viewData={viewData} filters={filters} sortList={sortList} setFilters={setFilters} setSortList={setSortList} setSelectedValue={setSelectedValue} currentSheet={currentSheet} currentSheetData={currentSheetData} handleGetData={handleGetData} dataLoading={dataLoading}  /> : <SheetSettings redirectToDataView={() => setShowSheetSettings(false)} updateSheet={updateSheet} currentSheet={currentSheet} currentReport={currentReport}  />}
     </div>
   )
 }

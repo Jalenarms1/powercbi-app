@@ -18,13 +18,19 @@ router.get('/sheet', async (req, res) => {
         
         dataQuery = `exec ${dataSource} ${parameters.split(",").map(p => `'${p}'`).join(",")};`
     }
+
+    try {
+        console.log(dataQuery);
+        const resp = await execQuery(dataQuery)
     
-    console.log(dataQuery);
-    const resp = await execQuery(dataQuery)
-
-    console.log(dataQuery, resp);
-
-    res.json(resp)
+        console.log(dataQuery, resp);
+    
+        res.json(resp)
+        
+    } catch (error) {
+        res.json({err: 'Error getting data.'})
+    }
+    
 })
 
 router.post('/sheet/add', async (req, res) => {

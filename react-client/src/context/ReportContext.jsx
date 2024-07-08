@@ -1,5 +1,5 @@
 import { useContext, createContext, useState, useEffect } from "react";
-import { get, getFilterColsFromStr, getSortsFromStr, post, put } from "../utils";
+import { get, getFilterColsFromStr, getFiltersStr, getSortListStr, getSortsFromStr, post, put, sortArr } from "../utils";
 import { useAuth } from "./AuthContext";
 
 
@@ -17,6 +17,7 @@ export const ReportContextProvider  = ({children}) => {
     const [viewData, setViewData] = useState(null)
     const [filters, setFilters] = useState([])
     const [sortList, setSortList] = useState([])
+    const [dataErr, setDataErr] = useState(false)
 
     const {user} = useAuth()
 
@@ -24,7 +25,6 @@ export const ReportContextProvider  = ({children}) => {
         
         const resp = await post('/report/add', {title, dataSource, parameters, dataSourceType, columnList, user: user.username, containerId})
     
-        console.log(resp);
     }
 
     const getReports = async (containerId) => {
@@ -55,9 +55,13 @@ export const ReportContextProvider  = ({children}) => {
     }
 
     const getSheetData = async (sheet) => {
+        setDataErr(false)
         setCurrentSheetData(null)
         const {data} = await get(`/sheet?sheetId=${sheet.uid}&dataSource=${sheet.dataSource}&dataSourceType=${sheet.dataSourceType}&columnList=${sheet.columnList}&parameters=${sheet.parameters}`)
-        console.log('data');
+        
+        if (data.err) {
+            setDataErr(true)
+        }
         setDataHx({...dataHx, [sheet.uid]: data})
         setCurrentSheetData(data)
 
@@ -76,12 +80,24 @@ export const ReportContextProvider  = ({children}) => {
     }
 
     const updateSheet = async (fieldsToUpd, sheetId, reportId) => {
+
+        if (!fieldsToUpd.filters && !Object.keys(fieldsToUpd).includes('dataSource')) {
+            fieldsToUpd.filters = getFiltersStr(filters)
+        }
+
+        if(!fieldsToUpd.orderBy && !Object.keys(fieldsToUpd).includes('dataSource')) {
+            fieldsToUpd.orderBy = getSortListStr(sortList)
+        }
+
+        console.log(fieldsToUpd);
+
         const {data} = await put(`/sheet/update?sheetId=${sheetId}`, fieldsToUpd)
         getReport(reportId)
         if(Object.keys(fieldsToUpd).includes('dataSource')) {
             setDataHx({...dataHx, [sheetId]: null})
 
         }
+        console.log('updated sheet', data);
         handleSetSheet(data)
         // getSheetData(data)
     }
@@ -102,16 +118,8 @@ export const ReportContextProvider  = ({children}) => {
     }, [currentReport])
 
     useEffect(() => {
-        // if(currentSheetData) {
-        //     setViewData(currentSheetData)
-        // }
-    }, [currentSheetData])
-
-    useEffect(() => {
         if(currentSheetData) {
-            console.log('filtering');
             let cData = [...currentSheetData]
-            console.log(cData);
             if (filters.length > 0) {
                 filters.forEach(f => {
                     cData = [...cData].filter(d => {
@@ -124,34 +132,12 @@ export const ReportContextProvider  = ({children}) => {
     
             } 
 
-            console.log(cData);
-
             if(sortList.length > 0) {
-
+                
                 sortList.forEach(s => {
-                    cData =  [...cData].sort((a, b) => {
-                        let comparison = 0;
-                        const valueA = a[s.name];
-                        const valueB = b[s.name];
-                  
-                        // Handle sorting based on data type
-                        if (typeof valueA === 'number' && typeof valueB === 'number') {
-                          comparison = valueA - valueB;
-                        } else if (typeof valueA === 'string' && typeof valueB === 'string') {
-                          comparison = valueA.localeCompare(valueB);
-                        } else if (valueA instanceof Date && valueB instanceof Date) {
-                          comparison = valueA.getTime() - valueB.getTime();
-                        } else {
-                          // Handle other data types or mixed types as needed
-                          comparison = String(valueA).localeCompare(String(valueB));
-                        }
-                  
-                        // Adjust comparison based on sort direction
-                        return s.sort === 'asc' ? comparison : -comparison;
-                    });
+                    cData = sortArr(cData, s.sort, s.name)
                 }) 
             }
-            console.log('filteredData', cData);
             setViewData(cData)
 
         }
@@ -177,9 +163,8 @@ export const ReportContextProvider  = ({children}) => {
         }
     }, [currentSheet])
 
-    console.log('dataHx', dataHx);
 
-    return <ReportContext.Provider value={{submitReport, getReports, reports, currentReport, getReport, getReportData, currentReportData, getMyReports, myReports, currentSheet, currentSheetData, handleSetSheet, getSheetData, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData}}>
+    return <ReportContext.Provider value={{submitReport, dataErr, getReports, reports, currentReport, getReport, getReportData, currentReportData, getMyReports, myReports, currentSheet, currentSheetData, handleSetSheet, getSheetData, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData}}>
         {children}
     </ReportContext.Provider>
 }

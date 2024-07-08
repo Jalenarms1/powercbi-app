@@ -32,7 +32,7 @@ export function formatDateIfDate(value) {
     }
     
     // If the value is not a Date, return it as is
-    if (`${value}`.trim() == 'null') return '(blank)'
+    if (`${value}`.trim() == 'null' || `${value}`.trim() == 'undefined') return '(blank)'
     
     return `${value}`;
   }
@@ -139,4 +139,53 @@ export const getSortsFromStr = (sortStr) => {
     })
 
     return sortList
+}
+
+export const getSortListStr = (arr) => {
+  let sortlistArr = []
+  arr.forEach(s => {
+    let sortStr = `${s.name}=${s.sort}`
+
+    sortlistArr.push(sortStr)
+        
+  })
+
+  return sortlistArr.join("|")
+}
+
+export const getFiltersStr = (arr) => {
+  let filtersArr = []
+  arr.forEach(f => {
+    let colStr = `${f.name}=${f.values.join(",")}`
+
+    filtersArr.push(colStr)
+  })
+
+  return filtersArr.join("|")
+}
+
+export const sortArr = (arr, direction, col) => {
+  let cData; 
+  
+  cData =  [...arr].sort((a, b) => {
+    let comparison = 0;
+    const valueA = col ? a[col] : a;
+    const valueB = col ? b[col] : b;
+    // Handle sorting based on data type
+    if (typeof valueA === 'number' && typeof valueB === 'number') {
+      comparison = valueA - valueB;
+    } else if (typeof valueA === 'string' && typeof valueB === 'string') {
+      comparison = valueA.localeCompare(valueB);
+    } else if (valueA instanceof Date && valueB instanceof Date) {
+      comparison = valueA.getTime() - valueB.getTime();
+    } else {
+      // Handle other data types or mixed types as needed
+      comparison = String(valueA).localeCompare(String(valueB));
+    }
+
+    // Adjust comparison based on sort direction
+    return direction === 'asc' ? comparison : -comparison;
+  });
+
+  return cData
 }
