@@ -192,11 +192,6 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport, redirec
         </div>
         <button  disabled={!dataSourceColumns} onClick={handleSave} className={` ${dataSourceColumns ? 'bg-white border hover:bg-blue-500 text-blue-500 hover:text-white active:scale-[.95]' : ' bg-zinc-300 text-zinc-200'}   shadow-md shadow-zinc-200 w-fit px-4 py-2 rounded-md`}>Save</button>
         <div className='flex flex-col gap-6'>
-            <p className="text-lg font-semibold text-red-500">Remove Sheet</p>
-            <div className="flex items-center gap-5 ">
-                <div className="w-5 h-5 border shadow-sm shadow-zinc-900"></div>
-                <p className='text-lg'>Confirm you would like to remove this sheet</p>
-            </div>
         </div>
     </div>
   )

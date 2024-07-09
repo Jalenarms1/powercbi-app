@@ -1,5 +1,5 @@
 import { useContext, createContext, useState, useEffect } from "react";
-import { get, getFilterColsFromStr, getFiltersStr, getSortListStr, getSortsFromStr, post, put, sortArr } from "../utils";
+import { del, get, getFilterColsFromStr, getFiltersStr, getSortListStr, getSortsFromStr, post, put, sortArr } from "../utils";
 import { useAuth } from "./AuthContext";
 
 
@@ -36,7 +36,7 @@ export const ReportContextProvider  = ({children}) => {
 
     const getReport = async (id) => {
         setCurrentReport(null)
-        setCurrentReportData(null)
+        setCurrentSheet(null)
         const {data} = await get(`/report/find?reportId=${id}`)
 
         setCurrentReport(data)
@@ -61,9 +61,11 @@ export const ReportContextProvider  = ({children}) => {
         
         if (data.err) {
             setDataErr(true)
+        } else {
+            setDataHx({...dataHx, [sheet.uid]: data})
+            setCurrentSheetData(data)
+
         }
-        setDataHx({...dataHx, [sheet.uid]: data})
-        setCurrentSheetData(data)
 
     }
 
@@ -102,6 +104,12 @@ export const ReportContextProvider  = ({children}) => {
         // getSheetData(data)
     }
 
+    const removeSheet = async (sheetId) => {
+        const resp = await del(`/sheet/remove?sheetId=${sheetId}`)
+
+        getReport(currentReport.uid)
+    }
+
     
 
     useEffect(() => {
@@ -118,7 +126,7 @@ export const ReportContextProvider  = ({children}) => {
     }, [currentReport])
 
     useEffect(() => {
-        if(currentSheetData) {
+        if(currentSheetData && !dataErr) {
             let cData = [...currentSheetData]
             if (filters.length > 0) {
                 filters.forEach(f => {
@@ -156,15 +164,18 @@ export const ReportContextProvider  = ({children}) => {
             }
             if (dataHx[currentSheet.uid]) {
                 setCurrentSheetData(dataHx[currentSheet.uid])
+            } else if (currentSheet.data) {
+                setCurrentSheetData(currentSheet.data)
             } else {
                 setCurrentSheetData(null)
 
             }
+            
         }
     }, [currentSheet])
 
 
-    return <ReportContext.Provider value={{submitReport, dataErr, getReports, reports, currentReport, getReport, getReportData, currentReportData, getMyReports, myReports, currentSheet, currentSheetData, handleSetSheet, getSheetData, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData}}>
+    return <ReportContext.Provider value={{submitReport, dataErr, getReports, reports, currentReport, getReport, getReportData, currentReportData, getMyReports, myReports, currentSheet, currentSheetData, handleSetSheet, getSheetData, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData, removeSheet}}>
         {children}
     </ReportContext.Provider>
 }

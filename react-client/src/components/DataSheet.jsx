@@ -20,7 +20,7 @@ export const DataSheet = ({currentSheet, dataErr, viewData, currentSheetData, da
         {(!currentSheetData) && <div className="h-96 w-full flex justify-center items-center shadow-sm shadow-zinc-400 pb-10">
             {(!dataLoading) && <button onClick={() => handleGetData(currentSheet)} className='bg-zinc-200 shadow-sm shadow-zinc-400 p-1 active:scale-[.95]'>Get Data</button>}
 
-            {(dataLoading) && <VscLoading className='animate-spin text-6xl' />}
+            {(dataLoading) && !dataErr && <VscLoading className='animate-spin text-6xl' />}
 
             {dataErr && <p className='text-red-500 text-xl'>There was an error retrieving the data. Please check your configuration.</p>}
 

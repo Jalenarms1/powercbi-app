@@ -58,10 +58,10 @@ export const Report = () => {
                 </div>
             </div>
 
-            {/* <AiTwotoneFolderAdd title='Add new report' className='text-3xl cursor-pointer active:scale-[.95] rounded-md' /> */}
+            
         </div>
         {(currentView == 'Preview Data' && currentReport) ? <PreviewData currentReport={currentReport} currentReportData={currentReportData} getReportData={getReportData} id={id} /> : currentView == 'Create Job' ? <CreateJob currentReport={currentReport} /> :
-        currentView == 'Job Logs' ? <div>Job Logs</div> : currentView == 'Jobs' ? <Jobs currentReport={currentReport} /> : <div>None</div>}
+        currentView == 'Job Logs' ? <div>Job Logs</div> : currentView == 'Jobs' ? <Jobs currentReport={currentReport} /> : <VscLoading className='animate-spin text-6xl' />}
         {/* <PreviewData currentReport={currentReport} currentReportData={currentReportData} getReportData={getReportData} id={id} /> */}
     </div>
   )

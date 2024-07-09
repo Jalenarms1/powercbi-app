@@ -48,14 +48,30 @@ router.get(`/report/find`, async (req, res) => {
     
 
     console.log('data', data);
+    let sheets = []
+    for (const s of data) {
+        const {sheetTitle, sheetId, dataQuery, dataSource, dataSourceType, columnList, filters, orderBy, parameters} = s
 
-    const sheets = data.map((d) => {
-        const {sheetTitle, sheetId, dataQuery, dataSource, dataSourceType, columnList, filters, orderBy, parameters} = d
-
-        return {
-            uid: sheetId, sheetTitle, dataQuery, dataSource, dataSourceType, columnList, filters, orderBy, parameters
+        const obj = {
+            uid: sheetId, 
+            sheetTitle, 
+            dataQuery, 
+            dataSource, 
+            dataSourceType, 
+            columnList, 
+            filters, 
+            orderBy, 
+            parameters
         }
-    })
+
+        let data = await redisGet(sheetId)
+
+        if(data) {
+            obj.data = data
+        } 
+
+        sheets.push(obj)
+    }
 
     res.json({uid: data[0].uid, title: data[0].title, containerId: data[0].containerId, createdBy: data[0].createdBy, createdAt: data[0].createdAt, sheets: [...sheets]})
     

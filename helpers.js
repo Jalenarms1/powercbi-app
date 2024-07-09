@@ -1,5 +1,5 @@
 const replaceApos = (str) => {
-    return str .split("").map(c => c == "'" ? "''" : c).join("")
+    return str ? str.split("").map(c => c == "'" ? "''" : c).join("") : ''
 }
 
 module.exports = {

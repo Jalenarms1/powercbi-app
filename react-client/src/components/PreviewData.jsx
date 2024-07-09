@@ -21,12 +21,13 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
 
     const [dataLoading, setDataLoading] = useState(false)
     const [selectedValue, setSelectedValue] = useState(null)
-    const {getSheetData, currentSheetData, currentSheet, handleSetSheet, dataErr, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData} = useReportContext()
+    const {getSheetData, currentSheetData, currentSheet, handleSetSheet, dataErr, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData, removeSheet} = useReportContext()
     const [showSheetSettings, setShowSheetSettings] = useState(false)
     const [editSheetTitle, setEditSheetTitle] = useState(false)
     const [newTitle, setNewTitle] = useState(currentSheet?.sheetTitle ?? null)
     const [saveFiltersBtn, setSaveFiltersBtn] = useState(false)
     const {user} = useAuth()
+    const [confirmRem, setConfirmRem] = useState(false)
     
 
     const handleGetData = (currentSheet) => {
@@ -85,35 +86,15 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
 
     const handleSaveFilters = () => {
 
-        // let filtersArr = []
-        // filters.forEach(f => {
-        //     let colStr = `${f.name}=${f.values.join(",")}`
-
-        //     filtersArr.push(colStr)
-
-            
-
-        // })
-
-        // let sortListArr = []
-        // sortList.forEach(s => {
-            
-        //     let sortStr = `${s.name}=${s.sort}`
-
-        //     sortListArr.push(sortStr)
-        // })
-
         const updObj = {}
 
         if(filters.length > 0) {
-            // updObj.filters = filtersArr.join("|")
             updObj.filters = getFiltersStr(filters)
         } else {
             updObj.filters = ''
         }
 
         if(sortList.length > 0) {
-            // updObj.orderBy = sortListArr.join("|")
             updObj.orderBy = getSortListStr(sortList)
         } else {
             updObj.orderBy = ''
@@ -148,8 +129,11 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
             {!showSheetSettings ? <div className="flex items-end gap-2">
                 {selectedValue && <p className=''>Value: <span className='bg-white p-1 rounded-md shadow-sm shadow-zinc-400 w-64 ml-1'>{selectedValue}</span></p>}
                 {(!dataLoading && currentSheetData) && <IoMdRefresh title='Refresh' onClick={() => handleGetData(currentSheet)} className='bg-zinc-200 cursor-pointer shadow-sm shadow-zinc-300 text-3xl active:scale-[.95]' />}
-                <CiSettings onClick={() => setShowSheetSettings(true)} title='Settings' className='bg-zinc-200 text-black shadow-sm shadow-zinc-300 text-3xl active:scale-[.95] cursor-pointer' />
-                <GoTrash className='bg-zinc-200 text-red-500 shadow-sm shadow-zinc-300 text-3xl active:scale-[.95] cursor-pointer' />
+                <CiSettings onClick={() => setShowSheetSettings(true)} title='Settings' className='bg-zinc-200 text-black shadow-sm shadow-zinc-300 text-3xl active:scale-[.95] cursor-pointer rounded-sm' />
+                {currentReport.sheets.length > 1 && <div>
+                    {!confirmRem ? <GoTrash onClick={() => setConfirmRem(true)} className={`bg-zinc-200 text-red-500 shadow-sm shadow-zinc-300 text-3xl active:scale-[.95] cursor-pointer rounded-sm`} /> : <GoTrash onClick={() => removeSheet(currentSheet.uid)} className='bg-red-500 text-white shadow text-3xl active:scale-[.95] cursor-pointer rounded-sm' />}
+
+                </div>}
             </div> : 
             <div className="flex items-end gap-2">
                 <button onClick={() => setShowSheetSettings(false)} title='Settings' className='bg-zinc-200 text-black shadow-sm shadow-zinc-300 active:scale-[.95] p-1 rounded-sm'>Back</button>

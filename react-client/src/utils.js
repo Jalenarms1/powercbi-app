@@ -13,8 +13,11 @@ export const get = (endpoint) => {
 }
 
 export const put = (endpoint, body) => {
-    // '/job/toggle-active'
     return axios.put(`${ROOT_API_URL}${endpoint}`, body, {headers: {Authorization: `Bearer ${ getToken()}`}})
+}
+
+export const del = (endpoint) => {
+    return axios.delete(`${ROOT_API_URL}${endpoint}`, {headers: {Authorization: `Bearer ${ getToken()}`}})
 }
 
 export function formatDateIfDate(value) {
