@@ -28,10 +28,10 @@ async function execQuery(query) {
   });
 }
 
-const CONTAINER_TABLE = 'PowerCBIContainer'
-const REPORT_TABLE = 'PowerCBIReport'
-const JOB_TABLE = 'PowerCBIReportJob'
-const SHEET_TABLE = 'PowerCBIDataSheet'
+const CONTAINER_TABLE = process.env.DEV_LOC == 'CBI' ? 'PowerCBIContainer' : 'Container'
+const REPORT_TABLE = process.env.DEV_LOC == 'CBI' ? 'PowerCBIReport' : 'Report'
+const JOB_TABLE = process.env.DEV_LOC == 'CBI' ? 'PowerCBIReportJob' : 'Job'
+const SHEET_TABLE = process.env.DEV_LOC == 'CBI' ? 'PowerCBIDataSheet' : 'DataSheet'
 
 module.exports = {
   getConnection,

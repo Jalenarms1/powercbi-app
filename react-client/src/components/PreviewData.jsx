@@ -10,6 +10,8 @@ import { SheetSettings } from './SheetSettings';
 
 import { FaCheckDouble } from "react-icons/fa6";
 import { getFilterColsFromStr, getFiltersStr, getSortListStr, getSortsFromStr } from '../utils';
+import { GoTrash } from "react-icons/go";
+
 
 
 
@@ -20,8 +22,6 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
     const [dataLoading, setDataLoading] = useState(false)
     const [selectedValue, setSelectedValue] = useState(null)
     const {getSheetData, currentSheetData, currentSheet, handleSetSheet, dataErr, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData} = useReportContext()
-    // const [filters, setFilters] = useState([])
-    // const [sortList, setSortList] = useState([])
     const [showSheetSettings, setShowSheetSettings] = useState(false)
     const [editSheetTitle, setEditSheetTitle] = useState(false)
     const [newTitle, setNewTitle] = useState(currentSheet?.sheetTitle ?? null)
@@ -149,6 +149,7 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
                 {selectedValue && <p className=''>Value: <span className='bg-white p-1 rounded-md shadow-sm shadow-zinc-400 w-64 ml-1'>{selectedValue}</span></p>}
                 {(!dataLoading && currentSheetData) && <IoMdRefresh title='Refresh' onClick={() => handleGetData(currentSheet)} className='bg-zinc-200 cursor-pointer shadow-sm shadow-zinc-300 text-3xl active:scale-[.95]' />}
                 <CiSettings onClick={() => setShowSheetSettings(true)} title='Settings' className='bg-zinc-200 text-black shadow-sm shadow-zinc-300 text-3xl active:scale-[.95] cursor-pointer' />
+                <GoTrash className='bg-zinc-200 text-red-500 shadow-sm shadow-zinc-300 text-3xl active:scale-[.95] cursor-pointer' />
             </div> : 
             <div className="flex items-end gap-2">
                 <button onClick={() => setShowSheetSettings(false)} title='Settings' className='bg-zinc-200 text-black shadow-sm shadow-zinc-300 active:scale-[.95] p-1 rounded-sm'>Back</button>
