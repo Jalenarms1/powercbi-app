@@ -35,9 +35,9 @@ export function formatDateIfDate(value) {
     }
     
     // If the value is not a Date, return it as is
-    if (`${value}`.trim() == 'null' || `${value}`.trim() == 'undefined') return '(blank)'
+    if (`${value}`.trim() == 'null' || `${value}`.trim() == 'undefined') return ''
     
-    return `${value}`;
+    return value;
   }
   
   // Helper function to format Date object to mm/dd/yyyy

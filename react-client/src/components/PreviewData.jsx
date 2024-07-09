@@ -19,9 +19,8 @@ import { GoTrash } from "react-icons/go";
 
 export const PreviewData = ({currentReport, currentReportData, getReportData, id}) => {
 
-    const [dataLoading, setDataLoading] = useState(false)
     const [selectedValue, setSelectedValue] = useState(null)
-    const {getSheetData, currentSheetData, currentSheet, handleSetSheet, dataErr, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData, removeSheet} = useReportContext()
+    const {getSheetData, currentSheetData, currentSheet, handleSetSheet, dataErr, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData, removeSheet, dataLoading} = useReportContext()
     const [showSheetSettings, setShowSheetSettings] = useState(false)
     const [editSheetTitle, setEditSheetTitle] = useState(false)
     const [newTitle, setNewTitle] = useState(currentSheet?.sheetTitle ?? null)
@@ -31,16 +30,14 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
     
 
     const handleGetData = (currentSheet) => {
-        setDataLoading(true)
         getSheetData(currentSheet)
     }
 
 
-    useEffect(() => {
-        if(currentSheetData) {
-            setDataLoading(false)
-        }
-    }, [currentSheetData])
+    // useEffect(() => {
+    //     if(currentSheetData) {
+    //     }
+    // }, [currentSheetData])
 
     useEffect(() => {
         if(filters, sortList) {
@@ -144,7 +141,7 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
             <div className="flex gap-2 items-end">
                 <p>Sheet:</p>
                 <Dropdown currentOptId={currentSheet?.uid} label={currentSheet?.sheetTitle ?? currentReport?.sheets[0].sheetTitle} options={sheetOpts(currentReport.sheets)} onSelect={(option) => handleSetSheet(option)} />
-                <button onClick={() => addSheet(currentSheet)} className='px-3 py-1 bg-blue-500 text-white rounded-md active:scale-[.95] active:shadow-sm active:shadow-zinc-700'>+ Add sheet</button>
+                <button onClick={() => addSheet({...currentSheet, data:null})} className='px-3 py-1 bg-blue-500 text-white rounded-md active:scale-[.95] active:shadow-sm active:shadow-zinc-700'>+ Add sheet</button>
                 {!showSheetSettings && <button disabled={!saveFiltersBtn} onClick={handleSaveFilters} className={`px-3 py-1  ${saveFiltersBtn ? 'bg-green-500 text-white' : 'bg-zinc-400 text-zinc-300'}  rounded-md active:scale-[.95] active:shadow-sm active:shadow-zinc-700`}>Save filters</button>}
             </div>
 

@@ -24,7 +24,7 @@ const getAsync = promisify(client.get).bind(client);
 // });
 
 const redisAdd = async (key, data) => {
-    client.set(key, JSON.stringify(data))
+  await client.set(key, JSON.stringify(data))
 }
 
 const redisGet = async (key) => {
@@ -32,10 +32,13 @@ const redisGet = async (key) => {
     return JSON.parse(data)
 }
 
+const redisDel = (key) => {
+  client.del(key)
+}
+
 
 module.exports = {
     redisAdd,
     redisGet,
-    getAsync,
-    setAsync
+    redisDel
 }

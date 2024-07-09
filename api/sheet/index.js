@@ -1,10 +1,9 @@
 const { execQuery, SHEET_TABLE } = require("../../dbconnect");
 const { replaceApos } = require("../../helpers");
-const { redisGet, redisAdd } = require("../../redis");
+const { redisGet, redisAdd, redisDel } = require("../../redis");
+const {v4: uuid} = require("uuid")
 
 const router = require("express").Router()
-
-
 
 
 router.get('/sheet', async (req, res) => {
@@ -23,17 +22,17 @@ router.get('/sheet', async (req, res) => {
     try {
         console.log(dataQuery);
 
-        let data = await redisGet(`${sheetId}`)
+        let data = await redisGet(sheetId)
 
         if (!data) {
             data = await execQuery(dataQuery)
 
-            await redisAdd(`${sheetId}`, data)
+            await redisAdd(sheetId, data)
         }
 
         // const resp = await execQuery(dataQuery)
     
-        console.log(dataQuery, data);
+        // console.log(dataQuery, data);
     
         res.json(data)
         
@@ -45,9 +44,19 @@ router.get('/sheet', async (req, res) => {
 })
 
 router.post('/sheet/add', async (req, res) => {
-    const {reportId, dataSource, dataSourceType, dataQuery, columnList, sheetTitle, parameters} = req.body
+    const {reportId, dataSource, dataSourceType, dataQuery, columnList, sheetTitle, parameters, uid} = req.body
 
-    const resp = await execQuery(`insert into ${SHEET_TABLE} (reportId, title, dataQuery, parameters, dataSource, dataSourceType, columnList, createdBy) values ('${reportId}', '${replaceApos(sheetTitle)}', '${replaceApos(dataQuery)}', ${parameters ? `'${replaceApos(parameters)}'` : 'NULL'}, '${replaceApos(dataSource)}', '${dataSourceType}', '${replaceApos(columnList)}', '${replaceApos(req.user.username)}')`)
+    const newUid = uuid().toUpperCase()
+
+    const resp = await execQuery(`insert into ${SHEET_TABLE} (uid, reportId, title, dataQuery, parameters, dataSource, dataSourceType, columnList, createdBy) values ('${newUid}', '${reportId}', '${replaceApos(sheetTitle)}', '${replaceApos(dataQuery)}', ${parameters ? `'${replaceApos(parameters)}'` : 'NULL'}, '${replaceApos(dataSource)}', '${dataSourceType}', '${replaceApos(columnList)}', '${replaceApos(req.user.username)}')`)
+
+    let data = await redisGet(uid)
+    
+    if (data) {
+        console.log('data existing');
+        await redisAdd(newUid, data)
+    }
+
 
     res.json(resp)
 })
@@ -63,6 +72,8 @@ router.put('/sheet/update', async (req, res) => {
     if (Object.keys(req.body).includes('dataSource')) {
         updArr.push('filters = NULL, orderBy = NULL')
     }
+
+    await redisDel(sheetId)
 
     
     const query = `update ${SHEET_TABLE} set ${updArr.join(", ")} where uid = '${sheetId}'`

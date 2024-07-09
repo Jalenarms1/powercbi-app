@@ -18,6 +18,7 @@ export const ReportContextProvider  = ({children}) => {
     const [filters, setFilters] = useState([])
     const [sortList, setSortList] = useState([])
     const [dataErr, setDataErr] = useState(false)
+    const [dataLoading, setDataLoading] = useState(false)
 
     const {user} = useAuth()
 
@@ -55,6 +56,7 @@ export const ReportContextProvider  = ({children}) => {
     }
 
     const getSheetData = async (sheet) => {
+        setDataLoading(true)
         setDataErr(false)
         setCurrentSheetData(null)
         const {data} = await get(`/sheet?sheetId=${sheet.uid}&dataSource=${sheet.dataSource}&dataSourceType=${sheet.dataSourceType}&columnList=${sheet.columnList}&parameters=${sheet.parameters}`)
@@ -66,6 +68,8 @@ export const ReportContextProvider  = ({children}) => {
             setCurrentSheetData(data)
 
         }
+
+        setDataLoading(false)
 
     }
 
@@ -95,13 +99,13 @@ export const ReportContextProvider  = ({children}) => {
 
         const {data} = await put(`/sheet/update?sheetId=${sheetId}`, fieldsToUpd)
         getReport(reportId)
-        if(Object.keys(fieldsToUpd).includes('dataSource')) {
-            setDataHx({...dataHx, [sheetId]: null})
+        setDataHx({...dataHx, [sheetId]: null})
+        // if(Object.keys(fieldsToUpd).includes('dataSource')) {
 
-        }
+        // }
         console.log('updated sheet', data);
         handleSetSheet(data)
-        // getSheetData(data)
+        getSheetData(data)
     }
 
     const removeSheet = async (sheetId) => {
@@ -174,8 +178,9 @@ export const ReportContextProvider  = ({children}) => {
         }
     }, [currentSheet])
 
+    console.log(currentReport);
 
-    return <ReportContext.Provider value={{submitReport, dataErr, getReports, reports, currentReport, getReport, getReportData, currentReportData, getMyReports, myReports, currentSheet, currentSheetData, handleSetSheet, getSheetData, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData, removeSheet}}>
+    return <ReportContext.Provider value={{dataLoading, submitReport, dataErr, getReports, reports, currentReport, getReport, getReportData, currentReportData, getMyReports, myReports, currentSheet, currentSheetData, handleSetSheet, getSheetData, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData, removeSheet}}>
         {children}
     </ReportContext.Provider>
 }

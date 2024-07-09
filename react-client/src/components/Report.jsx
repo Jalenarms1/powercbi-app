@@ -50,12 +50,12 @@ export const Report = () => {
                     {currentContainer && <Link to={`/container/${currentContainer.uid}`} className="text-xl text-zinc-400 hover:underline hover:text-zinc-300">{currentContainer.label}</Link>}
 
                 </div>
-                <div className='flex gap-4 items-end'>
+                {currentReport && <div className='flex gap-4 items-end'>
                     <ReportNav option={'Preview Data'} active={currentView == 'Preview Data'} onClick={() => toggleView('Preview Data')} />
                     <ReportNav option={'Jobs'} active={currentView == 'Jobs'} onClick={() => toggleView('Jobs')} />
                     <ReportNav option={'Create Job'} active={currentView == 'Create Job'} onClick={() => toggleView('Create Job')}/>
                     <ReportNav option={'Job Logs'} active={currentView == 'Job Logs'} onClick={() => toggleView('Job Logs')}/>
-                </div>
+                </div>}
             </div>
 
             
