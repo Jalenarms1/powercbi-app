@@ -29,10 +29,13 @@ const Dropdown = ({ options, label, onSelect, currentOptId=null }) => {
   };
 
   useEffect(() => {
-    if (!optionList) {
+    if (options) {
       setOptionList(options);
+      setSelectedOption(null)
     }
   }, [options]);
+
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -50,7 +53,7 @@ const Dropdown = ({ options, label, onSelect, currentOptId=null }) => {
   console.log('options', options);
 
   return (
-    <div className="relative inline-block min-w-52" ref={dropdownRef}>
+    <div className="relative inline-block min-w-52 " ref={dropdownRef}>
       <button 
         onClick={toggleDropdown} 
         className="w-full bg-white border border-gray-300 rounded shadow p-1 flex justify-between items-center"
@@ -70,7 +73,7 @@ const Dropdown = ({ options, label, onSelect, currentOptId=null }) => {
             <div 
               key={index} 
               onClick={() => handleOptionClick(option)} 
-              className={`p-2 hover:bg-gray-100 cursor-pointer ${(currentOptId == option?.uid && currentOptId) ? 'bg-gray-100' : ''}`}
+              className={`p-2 hover:bg-gray-100 cursor-pointer ${(currentOptId == option?.uid && currentOptId) ? 'bg-gray-100' : ''} w-[95%] truncate`}
             >
               {option.name}
             </div>

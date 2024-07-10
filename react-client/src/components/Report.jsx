@@ -40,6 +40,7 @@ export const Report = () => {
         setCurrentView(option)
     }
     console.log('currentReport', currentReport);
+    
 
   return (
     <div className='flex flex-col flex-1 p-3 gap-4 w-2/4 ml-2 pb-20'>

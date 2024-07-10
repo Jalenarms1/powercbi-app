@@ -78,34 +78,57 @@ export const ReportContextProvider  = ({children}) => {
     }
 
     const addSheet = async (sheet) => {
-        setCurrentReport(null)
         const resp = await post('/sheet/add', {...sheet, reportId: currentReport.uid})
 
-        await getReport(currentReport.uid)
+        if (resp.status == 200) {
+            let currReport = {...currentReport}
+            setCurrentReport({...currReport, sheets: [...currReport.sheets, {...currentSheet, uid: resp.data.newUid}]})
+            setCurrentSheet({...currentSheet, uid: resp.data.newUid})
+        }
+        
 
     }
 
     const updateSheet = async (fieldsToUpd, sheetId, reportId) => {
 
-        if (!fieldsToUpd.filters && !Object.keys(fieldsToUpd).includes('dataSource')) {
+        const fieldsList = Object.keys(fieldsToUpd)
+
+        if (!fieldsToUpd.filters && !fieldsList.includes('dataSource')) {
             fieldsToUpd.filters = getFiltersStr(filters)
         }
 
-        if(!fieldsToUpd.orderBy && !Object.keys(fieldsToUpd).includes('dataSource')) {
+        if(!fieldsToUpd.orderBy && !fieldsList.includes('dataSource')) {
             fieldsToUpd.orderBy = getSortListStr(sortList)
         }
 
-        console.log(fieldsToUpd);
+        
 
-        const {data} = await put(`/sheet/update?sheetId=${sheetId}`, fieldsToUpd)
-        getReport(reportId)
-        setDataHx({...dataHx, [sheetId]: null})
-        // if(Object.keys(fieldsToUpd).includes('dataSource')) {
+        const resp = await put(`/sheet/update?sheetId=${sheetId}`, fieldsToUpd)
 
-        // }
-        console.log('updated sheet', data);
-        handleSetSheet(data)
-        getSheetData(data)
+        if (resp.status == 200) {
+            if (fieldsList.includes('title')) {
+                const newSheets = [...currentReport.sheets].map(s => {
+
+
+                    return {
+                        ...s,
+                        sheetTitle: s.uid == sheetId ? fieldsToUpd.title : s.sheetTitle
+                    }
+                })
+
+                setCurrentReport({...currentReport, sheets: newSheets})
+                setCurrentSheet({...currentSheet, sheetTitle: fieldsToUpd.title})
+            } else {
+
+                // getReport(reportId)
+                setDataHx({...dataHx, [sheetId]: null})
+                
+                console.log('updated sheet', resp.data);
+                handleSetSheet(resp.data)
+                getSheetData(resp.data)
+            }
+
+        }
     }
 
     const removeSheet = async (sheetId) => {

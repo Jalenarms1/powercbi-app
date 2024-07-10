@@ -1,5 +1,5 @@
 const { execQuery, REPORT_TABLE, SHEET_TABLE } = require("../../dbconnect")
-const { replaceApos } = require("../../helpers")
+const { replaceApos, getReportWithSheets } = require("../../helpers")
 const { redisGet, redisAdd } = require("../../redis")
 const {v4: uuid} = require("uuid")
 
@@ -44,36 +44,40 @@ router.get(`/report/find`, async (req, res) => {
 
     console.log(`select r.uid, r.containerId, r.title, s.title as [sheetTitle], s.dataSource, s.dataSourceType, s.columnList, r.createdBy, r.createdAt from ${REPORT_TABLE} r left join ${SHEET_TABLE} s on r.uid = s.reportId where r.uid = '${reportId}'`);
 
-    const data = await execQuery(`select r.uid, s.uid as [sheetId], r.containerId, r.title, s.title as [sheetTitle], s.dataQuery, s.dataSource, s.parameters, s.dataSourceType, s.columnList, s.filters, s.orderBy, r.createdBy, r.createdAt from ${REPORT_TABLE} r left join ${SHEET_TABLE} s on r.uid = s.reportId where r.uid = '${reportId}' order by s.createdAt`)
+    // const data = await execQuery(`select r.uid, s.uid as [sheetId], r.containerId, r.title, s.title as [sheetTitle], s.dataQuery, s.dataSource, s.parameters, s.dataSourceType, s.columnList, s.filters, s.orderBy, r.createdBy, r.createdAt from ${REPORT_TABLE} r left join ${SHEET_TABLE} s on r.uid = s.reportId where r.uid = '${reportId}' order by s.createdAt`)
     
 
-    // console.log('data', data);
-    let sheets = []
-    for (const s of data) {
-        const {sheetTitle, sheetId, dataQuery, dataSource, dataSourceType, columnList, filters, orderBy, parameters} = s
+    // // console.log('data', data);
+    // let sheets = []
+    // for (const s of data) {
+    //     const {sheetTitle, sheetId, dataQuery, dataSource, dataSourceType, columnList, filters, orderBy, parameters} = s
 
-        const obj = {
-            uid: sheetId, 
-            sheetTitle, 
-            dataQuery, 
-            dataSource, 
-            dataSourceType, 
-            columnList, 
-            filters, 
-            orderBy, 
-            parameters
-        }
+    //     const obj = {
+    //         uid: sheetId, 
+    //         sheetTitle, 
+    //         dataQuery, 
+    //         dataSource, 
+    //         dataSourceType, 
+    //         columnList, 
+    //         filters, 
+    //         orderBy, 
+    //         parameters
+    //     }
 
-        let data = await redisGet(sheetId)
+    //     let data = await redisGet(sheetId)
         
-        if(data) {
-            obj.data = data
-        } 
+    //     if(data) {
+    //         obj.data = data
+    //     } 
 
-        sheets.push(obj)
-    }
+    //     sheets.push(obj)
+    // }
 
-    res.json({uid: data[0].uid, title: data[0].title, containerId: data[0].containerId, createdBy: data[0].createdBy, createdAt: data[0].createdAt, sheets: [...sheets]})
+    // res.json({uid: data[0].uid, title: data[0].title, containerId: data[0].containerId, createdBy: data[0].createdBy, createdAt: data[0].createdAt, sheets: [...sheets]})
+
+    const newReport = await getReportWithSheets(reportId)
+
+    res.json(newReport)
     
 })
 

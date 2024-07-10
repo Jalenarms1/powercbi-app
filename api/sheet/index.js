@@ -1,5 +1,5 @@
 const { execQuery, SHEET_TABLE } = require("../../dbconnect");
-const { replaceApos } = require("../../helpers");
+const { replaceApos, getReportWithSheets } = require("../../helpers");
 const { redisGet, redisAdd, redisDel } = require("../../redis");
 const {v4: uuid} = require("uuid")
 
@@ -57,23 +57,29 @@ router.post('/sheet/add', async (req, res) => {
         await redisAdd(newUid, data)
     }
 
+    const currReport = await getReportWithSheets(reportId)
 
-    res.json(resp)
+    res.json({newUid})
 })
 
 router.put('/sheet/update', async (req, res) => {
     const updArr = []
     const {sheetId} = req.query
 
-    Object.keys(req.body).forEach(k => {
+    const updFieldList = Object.keys(req.body)
+
+    updFieldList.forEach(k => {
         updArr.push(`${k} = '${replaceApos(req.body[k])}'`)
     })
 
-    if (Object.keys(req.body).includes('dataSource')) {
+    if (updFieldList.includes('dataSource')) {
         updArr.push('filters = NULL, orderBy = NULL')
     }
 
-    await redisDel(sheetId)
+    if (!updFieldList.includes('title')) {
+
+        await redisDel(sheetId)
+    }
 
     
     const query = `update ${SHEET_TABLE} set ${updArr.join(", ")} where uid = '${sheetId}'`

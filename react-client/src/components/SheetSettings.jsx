@@ -161,7 +161,7 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport, redirec
   return (
     <div className='w-full flex flex-col h-[100vh] gap-10'>
         <div className="flex gap-10 ">
-            <div className="flex flex-col w-1/3 max-w-[25vw] gap-2">
+            <div className="flex flex-col w-1/3 max-w-[35vw]  gap-2">
                 <label htmlFor="upd-title" className='font-semibold'>Data source: <span className='font-normal ml-2'>{currentSheet.dataSource}</span></label>
                 <Dropdown label={'Select a data source'} options={dataSourceList} onSelect={(opt) => setDataSource(opt)} />
                 <button disabled={dataSourceColumns} onClick={getColumns} className={` ${dataSourceColumns ? 'bg-zinc-400 text-zinc-300' : 'bg-blue-500 text-white'} rounded-md  px-2 py-1 w-fit active:scale-[.95]`}>Confirm data source</button>
@@ -181,7 +181,7 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport, redirec
                     <button className='border rounded-md border-zinc-800 active:scale-[.95] p-1 shadow-sm shadow-zinc-400' onClick={() => setParameters([...parameters, ''])}>+ Add parameter</button>
                 </div>}
             </div>
-            {<div className="flex flex-col w-1/3 max-w-[25vw] gap-2">
+            {<div className="flex flex-col w-1/3 max-w-[35vw]  gap-2">
                 <label htmlFor="upd-title" className='font-semibold'>Columns:</label>
                 {dataSourceColumns && <ColumnList toggleAll={toggleAllCols} label={'Select columns to show'} options={dataSourceColumns} onSelect={(opt) => setDataSourceColumns(dataSourceColumns.map(c => c.name == opt ? {...c, include: !c.include} : c))} />}
                 
