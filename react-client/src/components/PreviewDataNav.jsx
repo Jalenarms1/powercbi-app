@@ -4,14 +4,19 @@ import { FaCheckDouble } from 'react-icons/fa'
 import { GoTrash } from 'react-icons/go'
 import { IoMdRefresh } from 'react-icons/io'
 
-export const PreviewDataNav = ({currentSheet, currentReport, selectedValue, showSheetSettings, handleUpdateTitle, currentSheetData, dataLoading, handleGetData, removeSheet, setShowSheetSettings}) => {
+export const PreviewDataNav = ({currentSheet, updateSheet, currentReport, selectedValue, showSheetSettings, currentSheetData, dataLoading, handleGetData, removeSheet, setShowSheetSettings}) => {
     const [newTitle, setNewTitle] = useState(null)
     const [confirmRem, setConfirmRem] = useState(false)
+
+    const handleUpdateTitle = (title) => {
+        updateSheet({title: title.trim()}, currentSheet.uid, currentReport.uid)
+        setNewTitle(null)
+    }
 
   return (
     <div className='flex justify-between bg-zinc-100 shadow-md shadow-zinc-200 p-2'>
         <div className="flex gap-2 items-center cursor-pointer">
-            {(currentSheet && !newTitle) ? <p className='text-xl'>{currentSheet.sheetTitle}</p> : <input max={200} type='text' className='p-1' value={newTitle} onChange={(e) => setNewTitle(e.target.value.trim())} />}
+            {(currentSheet && !newTitle) ? <p className='text-xl'>{currentSheet.sheetTitle}</p> : <input max={200} type='text' className='p-1' value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />}
             { !newTitle ? <CiEdit onClick={() => setNewTitle(currentSheet?.sheetTitle)} className='text-2xl active:scale-[.95]' /> : <FaCheckDouble onClick={() => handleUpdateTitle(newTitle)}  className='p-1 bg-blue-400 text-white text-3xl rounded-sm active:scale-[.95]' />}
         </div>
         {!showSheetSettings ? <div className="flex items-end gap-2">

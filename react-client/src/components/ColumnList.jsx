@@ -63,7 +63,7 @@ export const ColumnList = ({ options, label, onSelect, toggleAll }) => {
   }, [dropdownRef]);
 
     return (
-        <div className="relative inline-block min-w-52" ref={dropdownRef}>
+        <div className="relative inline-block w-full" ref={dropdownRef}>
           <button 
             onClick={toggleDropdown} 
             className="w-full bg-white border border-gray-300 rounded shadow p-1 flex justify-between items-center"

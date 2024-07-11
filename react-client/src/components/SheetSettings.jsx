@@ -161,7 +161,7 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport, redirec
   return (
     <div className='w-full flex flex-col h-[100vh] gap-10'>
         <div className="flex gap-10 ">
-            <div className="flex flex-col w-1/3 max-w-[35vw]  gap-2">
+            <div className="flex flex-col min-w-96 max-w-fit  gap-2">
                 <label htmlFor="upd-title" className='font-semibold'>Data source: <span className='font-normal ml-2'>{currentSheet.dataSource}</span></label>
                 <Dropdown label={'Select a data source'} options={dataSourceList} onSelect={(opt) => setDataSource(opt)} />
                 <button disabled={dataSourceColumns} onClick={getColumns} className={` ${dataSourceColumns ? 'bg-zinc-400 text-zinc-300' : 'bg-blue-500 text-white'} rounded-md  px-2 py-1 w-fit active:scale-[.95]`}>Confirm data source</button>

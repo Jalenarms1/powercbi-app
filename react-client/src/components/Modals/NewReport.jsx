@@ -31,7 +31,7 @@ export const NewReport = ({closeModal, containerId}) => {
         if (validReport()) {
             console.log('Submitted');
             await submitReport(
-                reportTitle, 
+                reportTitle.trim(), 
                 currentDataSource.name,
                 parameters.join(','), 
                 currentDataSource.type_desc, dataSourceColumns.filter(c => c.include).map(c => c.name).join(','),
@@ -138,15 +138,15 @@ export const NewReport = ({closeModal, containerId}) => {
             <div className="flex flex-wrap w-full gap-6">
                 <div className="flex flex-col">
                     <label htmlFor="report-title">Title</label>
-                    <input maxLength={200} value={reportTitle} onChange={(e) => setReportTitle(e.target.value.trim())} type="text" id='report-title' placeholder='Title...' className='p-1 rounded-md' />
+                    <input maxLength={200} value={reportTitle} onChange={(e) => setReportTitle(e.target.value)} type="text" id='report-title' placeholder='Title...' className='p-1 rounded-md' />
                 </div>
-                <div className="flex flex-col gap-4 w-72 max-w-96">
+                <div className="flex flex-col gap-4 w-96 min-w-fit">
                     <div className="flex flex-col">
                         <p className="">Data Source</p>
                         <Dropdown onSelect={setCurrentDataSource} label={'Select a data source'} options={dataSources ?? null}  />
                     </div>
                     {(currentDataSource && currentDataSource.type_desc == 'SQL_STORED_PROCEDURE') && <p className='font-semibold'>exec {currentDataSource.name} {parameters.map(p => `'${p}'`).join(',')}</p>}
-                    {currentDataSource && <button onClick={getDSColumns} className='bg-green-400  rounded-md text-white font-semibold shadow-sm shadow-zinc-500 active:scale-[.95]'>Confirm Data Source</button>}
+                    {currentDataSource && <button onClick={getDSColumns} className='bg-green-400 w-fit px-2 py-1  rounded-md text-white font-semibold shadow-sm shadow-zinc-500 active:scale-[.95]'>Confirm Data Source</button>}
                     {columnErr && <p className='text-red-500 text-sm w-full'>{columnErr}</p>}
                     {(currentDataSource && currentDataSource.type_desc == 'SQL_STORED_PROCEDURE') && <div className="flex flex-col items-start gap-2">
                         <p className="">Parameters</p>
@@ -160,7 +160,7 @@ export const NewReport = ({closeModal, containerId}) => {
                         <button className='border rounded-md border-zinc-800 active:scale-[.95] p-1 shadow-md shadow-zinc-400' onClick={() => setParameters([...parameters, ''])}>+ Add parameter</button>
                     </div>}
                 </div>
-                {dataSourceColumns && dataSourceColumns.length > 0 && <div className='flex flex-col '>
+                {dataSourceColumns && dataSourceColumns.length > 0 && <div className='flex flex-col w-96'>
                     <p>Columns</p>
                     {/* <div className="flex flex-col bg-white p-1 gap-2 rounded-md">
                         {dataSourceColumns.map((c, i) => (

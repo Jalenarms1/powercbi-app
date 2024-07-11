@@ -78,12 +78,12 @@ export const ReportContextProvider  = ({children}) => {
     }
 
     const addSheet = async (sheet) => {
-        const resp = await post('/sheet/add', {...sheet, reportId: currentReport.uid})
+        const resp = await post('/sheet/add', {...sheet, reportId: currentReport.uid, sheetTitle: `${sheet.sheetTitle} (1)`})
 
         if (resp.status == 200) {
             let currReport = {...currentReport}
-            setCurrentReport({...currReport, sheets: [...currReport.sheets, {...currentSheet, uid: resp.data.newUid}]})
-            setCurrentSheet({...currentSheet, uid: resp.data.newUid})
+            setCurrentReport({...currReport, sheets: [...currReport.sheets, {...currentSheet, sheetTitle: `${sheet.sheetTitle} (1)`, uid: resp.data.newUid}]})
+            setCurrentSheet({...currentSheet, uid: resp.data.newUid, sheetTitle: `${sheet.sheetTitle} (1)`})
         }
         
 
@@ -124,6 +124,17 @@ export const ReportContextProvider  = ({children}) => {
                 setDataHx({...dataHx, [sheetId]: null})
                 
                 console.log('updated sheet', resp.data);
+
+                const newSheets = [...currentReport.sheets].map(s => {
+                    return {
+                        ...s,
+                        filters: s.uid == sheetId ? getFiltersStr(filters) : s.filters,
+                        orderBy: s.uid == sheetId ? getSortListStr(sortList) : s.orderBy,
+                        columnList: s.uid == sheetId ? fieldsToUpd.columnList : s.columnList
+                    }
+                })
+
+                setCurrentReport({...currentReport, sheets: newSheets})
                 handleSetSheet(resp.data)
                 getSheetData(resp.data)
             }

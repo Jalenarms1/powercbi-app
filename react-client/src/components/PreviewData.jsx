@@ -113,7 +113,7 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
   return (
     <div className='  rounded-md flex flex-col flex-1 gap-4 p-2  overflow-x-hidden'>
         
-        <PreviewDataNav currentSheet={currentSheet} currentSheetData={currentSheetData} dataLoading={dataLoading} handleGetData={handleGetData} handleUpdateTitle={handleUpdateTitle} removeSheet={removeSheet} setShowSheetSettings={setShowSheetSettings} showSheetSettings={showSheetSettings} currentReport={currentReport} selectedValue={selectedValue}  />
+        <PreviewDataNav updateSheet={updateSheet} currentSheet={currentSheet} currentSheetData={currentSheetData} dataLoading={dataLoading} handleGetData={handleGetData} removeSheet={removeSheet} setShowSheetSettings={setShowSheetSettings} showSheetSettings={showSheetSettings} currentReport={currentReport} selectedValue={selectedValue}  />
         {currentReport && <div className="w-full flex justify-end">
             <div className="flex gap-2 items-end">
                 <p>Sheet:</p>
