@@ -59,7 +59,7 @@ export const ReportContextProvider  = ({children}) => {
         setDataLoading(true)
         setDataErr(false)
         setCurrentSheetData(null)
-        const {data} = await get(`/sheet?sheetId=${sheet.uid}&dataSource=${sheet.dataSource}&dataSourceType=${sheet.dataSourceType}&columnList=${sheet.columnList}&parameters=${sheet.parameters}`)
+        const {data} = await get(`/sheet?sheetId=${sheet.uid}&dataSource=${sheet.dataSource}&dataSourceType=${sheet.dataSourceType}&columnList=${encodeURIComponent(sheet.columnList)}&parameters=${sheet.parameters}`)
         
         if (data.err) {
             setDataErr(true)
@@ -130,7 +130,7 @@ export const ReportContextProvider  = ({children}) => {
                         ...s,
                         filters: s.uid == sheetId ? getFiltersStr(filters) : s.filters,
                         orderBy: s.uid == sheetId ? getSortListStr(sortList) : s.orderBy,
-                        columnList: s.uid == sheetId ? fieldsToUpd.columnList : s.columnList
+                        columnList:  fieldsToUpd.columnList ? (s.uid == sheetId ? fieldsToUpd.columnList : s.columnList) : s.columnList
                     }
                 })
 
@@ -146,6 +146,23 @@ export const ReportContextProvider  = ({children}) => {
         const resp = await del(`/sheet/remove?sheetId=${sheetId}`)
 
         getReport(currentReport.uid)
+    }
+
+    const refreshSheet = async (sheet) => {
+        const {uid, columnList, dataSource, dataSourceType, parameters} = sheet
+        setCurrentSheetData(null)
+        setDataLoading(true)
+        setDataErr(false)
+        const {data, status} = await get(`/sheet/refresh?sheetId=${uid}&columnList=${encodeURIComponent(columnList)}&dataSource=${dataSource}&dataSourceType=${dataSourceType}&parameters=${parameters}`)
+
+        if(status == 200) {
+            setCurrentSheetData(data)
+            setDataHx({...dataHx, [uid]: data})
+            setDataLoading(false)
+        } else {
+            setDataErr(true)
+        }
+
     }
 
     
@@ -214,7 +231,7 @@ export const ReportContextProvider  = ({children}) => {
 
     console.log(currentReport);
 
-    return <ReportContext.Provider value={{dataLoading, submitReport, dataErr, getReports, reports, currentReport, getReport, getReportData, currentReportData, getMyReports, myReports, currentSheet, currentSheetData, handleSetSheet, getSheetData, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData, removeSheet}}>
+    return <ReportContext.Provider value={{dataLoading, submitReport, dataErr, getReports, reports, currentReport, getReport, getReportData, currentReportData, getMyReports, myReports, currentSheet, currentSheetData, handleSetSheet, getSheetData, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData, removeSheet, refreshSheet}}>
         {children}
     </ReportContext.Provider>
 }

@@ -1,5 +1,5 @@
 const { execQuery, SHEET_TABLE } = require("../../dbconnect");
-const { replaceApos, getReportWithSheets } = require("../../helpers");
+const { replaceApos, getReportWithSheets, getDataQuery } = require("../../helpers");
 const { redisGet, redisAdd, redisDel } = require("../../redis");
 const {v4: uuid} = require("uuid")
 
@@ -13,11 +13,13 @@ router.get('/sheet', async (req, res) => {
     let dataQuery;
     
     if (dataSourceType == 'VIEW') {
-        dataQuery = `select ${columnList.split(",").map(c => `[${c}]`).join(",")} from ${dataSource}`
+        dataQuery = `select ${columnList.split(",").map(c => `[${c}]`.trim()).join(",")} from ${dataSource}`
     } else {
         
         dataQuery = `exec ${dataSource} ${parameters.split(",").map(p => `'${p}'`).join(",")};`
     }
+
+    dataQuery = getDataQuery(columnList, dataSource, dataSourceType, parameters)
 
     try {
         console.log(dataQuery);
@@ -103,6 +105,27 @@ router.delete('/sheet/remove', async (req, res) => {
     const resp = await execQuery(query)
 
     res.json(resp)
+})
+
+router.get('/sheet/refresh', async (req, res) => {
+    const {sheetId, columnList, dataSource, dataSourceType, parameters} = req.query
+
+    let dataQuery = getDataQuery(columnList, dataSource, dataSourceType, parameters)
+
+    await redisDel(sheetId)
+    try {
+        const data = await execQuery(dataQuery)
+    
+        await redisAdd(sheetId, data)
+    
+        res.json(data)
+        
+    } catch (error) {
+        res.json({error})
+    }
+
+
+
 })
 
 module.exports = router

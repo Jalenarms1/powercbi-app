@@ -21,7 +21,7 @@ import { PreviewDataNav } from './PreviewDataNav';
 export const PreviewData = ({currentReport, currentReportData, getReportData, id}) => {
 
     const [selectedValue, setSelectedValue] = useState(null)
-    const {getSheetData, currentSheetData, currentSheet, handleSetSheet, dataErr, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData, removeSheet, dataLoading} = useReportContext()
+    const {getSheetData, refreshSheet, currentSheetData, currentSheet, handleSetSheet, dataErr, addSheet, updateSheet, filters, setFilters, sortList, setSortList, viewData, removeSheet, dataLoading} = useReportContext()
     const [showSheetSettings, setShowSheetSettings] = useState(false)
     const [editSheetTitle, setEditSheetTitle] = useState(false)
     const [newTitle, setNewTitle] = useState(currentSheet?.sheetTitle ?? null)
@@ -113,7 +113,7 @@ export const PreviewData = ({currentReport, currentReportData, getReportData, id
   return (
     <div className='  rounded-md flex flex-col flex-1 gap-4 p-2  overflow-x-hidden'>
         
-        <PreviewDataNav updateSheet={updateSheet} currentSheet={currentSheet} currentSheetData={currentSheetData} dataLoading={dataLoading} handleGetData={handleGetData} removeSheet={removeSheet} setShowSheetSettings={setShowSheetSettings} showSheetSettings={showSheetSettings} currentReport={currentReport} selectedValue={selectedValue}  />
+        <PreviewDataNav refreshSheet={refreshSheet} updateSheet={updateSheet} currentSheet={currentSheet} currentSheetData={currentSheetData} dataLoading={dataLoading} handleGetData={handleGetData} removeSheet={removeSheet} setShowSheetSettings={setShowSheetSettings} showSheetSettings={showSheetSettings} currentReport={currentReport} selectedValue={selectedValue}  />
         {currentReport && <div className="w-full flex justify-end">
             <div className="flex gap-2 items-end">
                 <p>Sheet:</p>

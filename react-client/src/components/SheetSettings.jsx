@@ -124,7 +124,7 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport, redirec
             parameters: parameters.join(','), 
              
             dataQuery, 
-            columnList: dataSourceColumns.filter(f => f.include).map(c => c.name).join(",")
+            columnList: dataSourceColumns.filter(f => f.include).map(c => c.name.trim()).join(",")
         }
 
         
@@ -157,6 +157,8 @@ export const SheetSettings = ({currentSheet, updateSheet, currentReport, redirec
             }))
         }
     }
+
+    console.log(dataSourceColumns);
 
   return (
     <div className='w-full flex flex-col h-[100vh] gap-10'>

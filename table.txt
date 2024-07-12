@@ -46,3 +46,19 @@ CREATE TABLE ReportJob (
     hour NVARCHAR(50),
     active int default 1
 );
+
+
+--export data option
+
+--a way to look at data set and identifyy outliers, paste query get results and analyze data of percentage of each value, finds correlation between columns of the records of are active
+identify patterns in data
+
+--smaller margins to see more data
+
+--make columns resizeable and store sizing
+
+--allow users to rearrange columns 
+
+--store filter and sorting values in local storage 
+
+--Have a user create a team and add 

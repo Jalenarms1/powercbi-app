@@ -38,7 +38,23 @@ const getReportWithSheets = async (reportId) => {
     return {uid: data[0].uid, title: data[0].title, containerId: data[0].containerId, createdBy: data[0].createdBy, createdAt: data[0].createdAt, sheets: [...sheets]}
 }
 
+const getDataQuery = (columnList, dataSource, dataSourceType, parameters) => {
+    let dataQuery;
+    
+    if (dataSourceType == 'VIEW') {
+        dataQuery = `select ${columnList.split(",").map(c => `[${c}]`.trim()).join(",")} from ${dataSource}`
+    } else {
+        
+        dataQuery = `exec ${dataSource} ${parameters.split(",").map(p => `'${p}'`).join(",")};`
+    }
+
+    return dataQuery
+}
+
+
+
 module.exports = {
     replaceApos,
-    getReportWithSheets
+    getReportWithSheets,
+    getDataQuery
 }

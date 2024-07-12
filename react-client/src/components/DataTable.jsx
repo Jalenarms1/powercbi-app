@@ -115,9 +115,9 @@ export const DataTable = ({columns, data, setSelectedValue, sortList, setSortLis
     console.log('filters', filters);
 
     const renderItem = (item, index) => (
-        <div className={`flex ${index % 2 == 0 ? 'bg-zinc-300' : 'bg-zinc-200'} text-black min-w-[400px]`}>
+        <div className={`flex ${index % 2 == 0 ? 'bg-zinc-300' : 'bg-zinc-200'} text-black min-w-[200px] overflow-hidden truncate`}>
             {colList.map((c, i) => (
-                <p onClick={() => setSelectedValue(item[c])} className='w-[400px] p-3  truncate cursor-pointer hover:shadow-inner'>{(['true', 'false'].includes(`${item[c]}`) && !['true', 'false'].includes(item[c])) ?`${item[c]}` : formatDateIfDate(item[c])}</p>
+                <p onClick={() => setSelectedValue(item[c])} className='min-w-[200px] p-3  truncate cursor-pointer hover:shadow-inner'>{(['true', 'false'].includes(`${item[c]}`) && !['true', 'false'].includes(item[c])) ?`${item[c]}` : formatDateIfDate(item[c])}</p>
             ))}
         </div>
     );
@@ -125,7 +125,7 @@ export const DataTable = ({columns, data, setSelectedValue, sortList, setSortLis
     const renderCols = () => (
         <div id="table-header" className='flex bg-slate-900 text-white sticky top-0'>
             {colList.map((c, i) => (
-                <div className='min-w-[400px] p-3 flex justify-between items-center '>
+                <div className='min-w-[200px] p-3 flex justify-between items-center '>
                     <div className="flex items-center gap-2">
                         <p onClick={() => toggleSort(c)} className='cursor-pointer' key={i} >{c}</p>
                         {sortList?.find(s => s.name == c)?.sort == 'asc' && <FaLongArrowAltUp />}
@@ -146,7 +146,7 @@ export const DataTable = ({columns, data, setSelectedValue, sortList, setSortLis
             
             <div id="table-header" className='flex bg-slate-900 text-white sticky top-0'>
                 {colList.map((c, i) => (
-                    <div className='min-w-[400px] p-2 flex justify-between items-center '>
+                    <div className='min-w-[200px] p-2 flex justify-between items-center '>
                         <div className="flex items-center gap-2 hover:bg-slate-800 rounded-md p-1">
                             <p onClick={() => toggleSort(c)} className='cursor-pointer' key={i} >{c}</p>
                             {sortList?.find(s => s.name == c)?.sort == 'asc' && <FaLongArrowAltUp />}

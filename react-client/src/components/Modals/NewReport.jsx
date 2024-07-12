@@ -34,7 +34,8 @@ export const NewReport = ({closeModal, containerId}) => {
                 reportTitle.trim(), 
                 currentDataSource.name,
                 parameters.join(','), 
-                currentDataSource.type_desc, dataSourceColumns.filter(c => c.include).map(c => c.name).join(','),
+                currentDataSource.type_desc, 
+                dataSourceColumns.filter(c => c.include).map(c => c.name.trim()).join(','),
                 containerId
             )
             closeModal()

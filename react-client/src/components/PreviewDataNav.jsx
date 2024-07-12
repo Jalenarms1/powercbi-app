@@ -4,7 +4,7 @@ import { FaCheckDouble } from 'react-icons/fa'
 import { GoTrash } from 'react-icons/go'
 import { IoMdRefresh } from 'react-icons/io'
 
-export const PreviewDataNav = ({currentSheet, updateSheet, currentReport, selectedValue, showSheetSettings, currentSheetData, dataLoading, handleGetData, removeSheet, setShowSheetSettings}) => {
+export const PreviewDataNav = ({currentSheet, refreshSheet, updateSheet, currentReport, selectedValue, showSheetSettings, currentSheetData, dataLoading, handleGetData, removeSheet, setShowSheetSettings}) => {
     const [newTitle, setNewTitle] = useState(null)
     const [confirmRem, setConfirmRem] = useState(false)
 
@@ -21,7 +21,7 @@ export const PreviewDataNav = ({currentSheet, updateSheet, currentReport, select
         </div>
         {!showSheetSettings ? <div className="flex items-end gap-2">
             {selectedValue && <p className=''>Value: <span className='bg-white p-1 rounded-md shadow-sm shadow-zinc-400 w-64 ml-1'>{selectedValue}</span></p>}
-            {(!dataLoading && currentSheetData) && <IoMdRefresh title='Refresh' onClick={() => handleGetData(currentSheet)} className='bg-zinc-200 cursor-pointer shadow-sm shadow-zinc-300 text-3xl active:scale-[.95]' />}
+            {(!dataLoading && currentSheetData) && <IoMdRefresh title='Refresh' onClick={() => refreshSheet(currentSheet)} className='bg-zinc-200 cursor-pointer shadow-sm shadow-zinc-300 text-3xl active:scale-[.95]' />}
             <CiSettings onClick={() => setShowSheetSettings(true)} title='Settings' className='bg-zinc-200 text-black shadow-sm shadow-zinc-300 text-3xl active:scale-[.95] cursor-pointer rounded-sm' />
             {currentReport.sheets.length > 1 && <div>
                 {!confirmRem ? <GoTrash onClick={() => setConfirmRem(true)} className={`bg-zinc-200 text-red-500 shadow-sm shadow-zinc-300 text-3xl active:scale-[.95] cursor-pointer rounded-sm`} /> : <GoTrash onClick={() => removeSheet(currentSheet.uid)} className='bg-red-500 text-white shadow text-3xl active:scale-[.95] cursor-pointer rounded-sm' />}

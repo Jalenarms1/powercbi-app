@@ -21,7 +21,7 @@ router.post('/report/add', async (req, res) => {
     let dataQuery;
     
     if (dataSourceType == 'VIEW') {
-        dataQuery = `select ${columnList.split(",").map(c => `[${c}]`).join(",")} from ${dataSource}`
+        dataQuery = `select ${columnList.split(",").map(c => `[${c}]`.trim()).join(",")} from ${dataSource}`
     } else {
         dataQuery = `exec ${replaceApos(dataSource)} ${replaceApos(parameters)};`
     }
